@@ -60,10 +60,6 @@ main{padding:16px}
 .coin-details{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:12px;border-top:1px solid var(--border);font-size:11px}
 .coin-details span{color:var(--muted)}
 .coin-details strong{color:var(--text)}
-.coin-actions{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.btn-edit,.btn-delete{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
-.btn-edit{background:var(--card2);color:var(--text)}
-.btn-delete{background:rgba(239,68,68,0.15);color:var(--danger)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty-state .icon{font-size:48px;margin-bottom:16px}
 .empty-state h3{color:var(--text);margin-bottom:8px}
@@ -85,17 +81,11 @@ main{padding:16px}
 .btn-save{flex:1;padding:16px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .photo-section{margin-bottom:16px}
-.photo-preview{width:100%;height:150px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative}
+.photo-preview{width:100%;height:120px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
 .photo-preview img{width:100%;height:100%;object-fit:cover}
 .photo-preview .placeholder{text-align:center;color:var(--muted)}
-.photo-preview .placeholder span{font-size:40px;display:block;margin-bottom:8px}
-.photo-actions{display:flex;gap:8px;margin-top:8px}
-.photo-actions button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-size:13px}
-.btn-gallery{background:var(--card2);color:var(--text);border:1px solid var(--border)}
-.btn-remove-photo{background:rgba(239,68,68,0.15);color:var(--danger)}
+.photo-preview .placeholder span{font-size:32px;display:block;margin-bottom:4px}
 #photoInput,#photoInput2{display:none}
-
-/* VUE DÉTAILLÉE */
 .detail-view{display:none;position:fixed;inset:0;background:var(--bg);z-index:1001;overflow-y:auto}
 .detail-view.active{display:block}
 .detail-header{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--card);position:sticky;top:0;z-index:10}
@@ -127,12 +117,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .detail-price-item .value{font-size:20px;font-weight:700}
 .detail-price-item .sub{font-size:11px;color:var(--muted)}
 .detail-notes{background:var(--card);border-radius:12px;padding:16px;color:var(--muted);font-size:14px;line-height:1.5}
-.detail-actions{display:flex;gap:12px;padding:16px;margin-top:auto}
+.detail-actions{display:flex;gap:12px;padding:16px}
 .detail-actions button{flex:1;padding:16px;border-radius:12px;font-size:16px;cursor:pointer;border:none}
+.btn-edit{background:var(--card2);color:var(--text)}
+.btn-delete{background:rgba(239,68,68,0.15);color:var(--danger)}
 </style>
 </head>
 <body>
-<header id="mainHeader">
+<header>
 <div class="header-top">
 <div class="logo"><div class="logo-icon">🪙</div><h1>Silver Vault</h1></div>
 <div class="price-box" onclick="togglePriceEdit()">
@@ -159,40 +151,33 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 </header>
-
-<main id="mainContent">
+<main>
 <div class="actions">
 <div class="search-box"><input type="text" id="searchInput" placeholder="Rechercher..." oninput="render()"></div>
-<button class="btn-add" onclick="openForm()">+</button>
+<button class="btn-add" onclick="openForm(null)">+</button>
 <button class="btn-export" onclick="exportCSV()">📥</button>
 </div>
 <div id="list" class="coins-list"></div>
 </main>
 
-<!-- VUE DÉTAILLÉE -->
 <div class="detail-view" id="detailView">
 <div class="detail-header">
 <button class="btn-back" onclick="closeDetail()">←</button>
-<h2 id="detailName">Nom de la pièce</h2>
-<button class="btn-settings" onclick="editFromDetail()">⚙️</button>
+<h2 id="detailName">Pièce</h2>
+<button class="btn-settings" onclick="editCurrent()">⚙️</button>
 </div>
-<div class="detail-photo" id="detailPhoto">
-<div class="no-photo">🪙</div>
-</div>
+<div class="detail-photo" id="detailPhoto"></div>
 <div class="detail-tabs">
-<div class="detail-tab active" onclick="switchTab('data')">Vos données</div>
-<div class="detail-tab" onclick="switchTab('info')">Informations</div>
+<div class="detail-tab active" id="tabData" onclick="switchTab('data')">Vos données</div>
+<div class="detail-tab" id="tabInfo" onclick="switchTab('info')">Informations</div>
 </div>
-<div class="detail-content" id="detailContent">
-<!-- Contenu dynamique -->
-</div>
+<div class="detail-content" id="detailContent"></div>
 <div class="detail-actions">
-<button class="btn-edit" onclick="editFromDetail()">✏️ Modifier</button>
-<button class="btn-delete" onclick="deleteFromDetail()">🗑️ Supprimer</button>
+<button class="btn-edit" onclick="editCurrent()">✏️ Modifier</button>
+<button class="btn-delete" onclick="deleteCurrent()">🗑️ Supprimer</button>
 </div>
 </div>
 
-<!-- FORMULAIRE -->
 <div class="modal" id="formModal">
 <div class="modal-content">
 <div class="modal-header"><h2 id="formTitle">Ajouter</h2><button class="btn-close" onclick="closeForm()">✕</button></div>
@@ -200,23 +185,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 <input type="hidden" id="fId">
 <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event,1)">
 <input type="file" id="photoInput2" accept="image/*" onchange="handlePhoto(event,2)">
-
+<div class="form-row">
 <div class="photo-section">
-<label>Photo face avant</label>
+<label>Photo avant</label>
 <div class="photo-preview" onclick="document.getElementById('photoInput').click()">
-<div class="placeholder" id="photoPlaceholder1"><span>📷</span><small>Face avant</small></div>
-<img id="photoImg1" style="display:none">
+<div class="placeholder" id="ph1"><span>📷</span><small>Avant</small></div>
+<img id="img1" style="display:none">
 </div>
 </div>
-
 <div class="photo-section">
-<label>Photo face arrière (optionnel)</label>
+<label>Photo arrière</label>
 <div class="photo-preview" onclick="document.getElementById('photoInput2').click()">
-<div class="placeholder" id="photoPlaceholder2"><span>📷</span><small>Face arrière</small></div>
-<img id="photoImg2" style="display:none">
+<div class="placeholder" id="ph2"><span>📷</span><small>Arrière</small></div>
+<img id="img2" style="display:none">
 </div>
 </div>
-
+</div>
 <div class="form-group"><label>Nom *</label><input type="text" id="fName" placeholder="American Silver Eagle"></div>
 <div class="form-row">
 <div class="form-group"><label>Pays</label><input type="text" id="fCountry" placeholder="USA"></div>
@@ -264,20 +248,32 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <script>
-var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins",currentPhoto1=null,currentPhoto2=null,currentDetailId=null,currentTab="data";
+var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins";
+var photo1=null,photo2=null,viewId=null,viewTab="data";
 
-function load(){var k=["silver_vault_coins","sv2_coins","sv_coins"];for(var i=0;i<k.length;i++){try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}}var pk=["silver_vault_price","sv2_price"];for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}}
+function load(){
+  var k=["silver_vault_coins","sv2_coins","sv_coins"];
+  for(var i=0;i<k.length;i++){
+    try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}
+  }
+  var pk=["silver_vault_price","sv2_price"];
+  for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}
+}
 function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins))}catch(e){}}
 function savePrice(){try{localStorage.setItem("silver_vault_price",price.toString())}catch(e){}}
-function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show")){var i=document.getElementById("manualInput");i.value=price.toFixed(2);i.focus()}}
-function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePriceDisplay();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
-function updatePriceDisplay(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
-function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePriceDisplay();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
+
+function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show")){document.getElementById("manualInput").value=price.toFixed(2)}}
+function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePrice();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
+function updatePrice(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
+function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePrice();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
+
 function pure(w,p){return(w*p)/1000}
-function value(p){return p*price}
+function val(p){return p*price}
 function fmt(v){return v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
 function fmtW(v){return v.toFixed(3)+" g"}
-function updateStats(){var t=0;for(var i=0;i<coins.length;i++)t+=pure(coins[i].weight||0,coins[i].purity||999);document.getElementById("statValue").textContent=fmt(value(t));document.getElementById("statPure").textContent=fmtW(t);document.getElementById("statCount").textContent=coins.length}
+function updateStats(){var t=0;for(var i=0;i<coins.length;i++)t+=pure(coins[i].weight||0,coins[i].purity||999);document.getElementById("statValue").textContent=fmt(val(t));document.getElementById("statPure").textContent=fmtW(t);document.getElementById("statCount").textContent=coins.length}
+
+function getCoin(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id)return coins[i];return null}
 
 function render(){
   var q=document.getElementById("searchInput").value.toLowerCase(),list=document.getElementById("list"),f=[];
@@ -285,166 +281,90 @@ function render(){
   if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}
   var h="";
   for(var i=0;i<f.length;i++){
-    var c=f[i],p=pure(c.weight||0,c.purity||999),v=value(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
-    var iconHtml=c.photo?"<img src='"+c.photo+"'>":"🏛️";
-    h+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+iconHtml+"</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
+    var c=f[i],p=pure(c.weight||0,c.purity||999),v=val(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+    var ic=c.photo?"<img src='"+c.photo+"'>":"🏛️";
+    h+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+ic+"</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
   }
   list.innerHTML=h
 }
 
-// === VUE DÉTAILLÉE ===
+// DETAIL VIEW
 function openDetail(id){
-  currentDetailId=id;
-  var c=null;
-  for(var i=0;i<coins.length;i++)if(coins[i].id===id){c=coins[i];break}
-  if(!c)return;
-  
+  viewId=id;viewTab="data";
+  var c=getCoin(id);if(!c)return;
   document.getElementById("detailName").textContent=c.name||"Sans nom";
-  
-  // Photo(s)
-  var photoHtml="";
-  if(c.photo&&c.photo2){
-    photoHtml="<div class='detail-photos-dual'><img src='"+c.photo+"'><img src='"+c.photo2+"'></div>";
-  }else if(c.photo){
-    photoHtml="<img src='"+c.photo+"'>";
-  }else{
-    photoHtml="<div class='no-photo'>🪙</div>";
-  }
-  document.getElementById("detailPhoto").innerHTML=photoHtml;
-  
-  currentTab="data";
-  updateDetailTabs();
-  renderDetailContent(c);
-  
+  var ph=document.getElementById("detailPhoto");
+  if(c.photo&&c.photo2)ph.innerHTML="<div class='detail-photos-dual'><img src='"+c.photo+"'><img src='"+c.photo2+"'></div>";
+  else if(c.photo)ph.innerHTML="<img src='"+c.photo+"'>";
+  else ph.innerHTML="<div class='no-photo'>🪙</div>";
+  updateTabs();renderDetail();
   document.getElementById("detailView").classList.add("active");
 }
-
-function closeDetail(){
-  document.getElementById("detailView").classList.remove("active");
-  currentDetailId=null;
-}
-
-function switchTab(tab){
-  currentTab=tab;
-  updateDetailTabs();
-  var c=null;
-  for(var i=0;i<coins.length;i++)if(coins[i].id===currentDetailId){c=coins[i];break}
-  if(c)renderDetailContent(c);
-}
-
-function updateDetailTabs(){
-  var tabs=document.querySelectorAll(".detail-tab");
-  tabs[0].classList.toggle("active",currentTab==="data");
-  tabs[1].classList.toggle("active",currentTab==="info");
-}
-
-function renderDetailContent(c){
-  var p=pure(c.weight||0,c.purity||999);
-  var v=value(p);
-  var g=c.purchasePrice?v-c.purchasePrice:null;
-  var gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
-  
-  var html="<div class='detail-title'>"+c.name+"</div>";
-  html+="<div class='detail-year'>"+(c.year||"")+"</div>";
-  
-  if(currentTab==="data"){
-    html+="<div class='detail-section'><h3>Valeur actuelle</h3>";
-    html+="<div class='detail-price-box'>";
-    html+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
-    html+="<div class='detail-price-item'><div class='label'>Gain/Perte</div><div class='value "+(g>=0?"up":"down")+"'>"+(gp!==null?(g>=0?"+":"")+gp+"%":"—")+"</div></div>";
-    html+="</div></div>";
-    
-    html+="<div class='detail-section'><h3>Vos données</h3>";
-    html+="<div class='detail-row'><span class='label'>Prix d'achat</span><span class='value'>"+(c.purchasePrice?fmt(c.purchasePrice):"—")+"</span></div>";
-    html+="<div class='detail-row'><span class='label'>Date d'achat</span><span class='value'>"+(c.purchaseDate||"—")+"</span></div>";
-    html+="</div>";
-    
-    if(c.notes){
-      html+="<div class='detail-section'><h3>Notes</h3>";
-      html+="<div class='detail-notes'>"+c.notes+"</div></div>";
-    }
+function closeDetail(){document.getElementById("detailView").classList.remove("active");viewId=null}
+function switchTab(t){viewTab=t;updateTabs();renderDetail()}
+function updateTabs(){document.getElementById("tabData").classList.toggle("active",viewTab==="data");document.getElementById("tabInfo").classList.toggle("active",viewTab==="info")}
+function renderDetail(){
+  var c=getCoin(viewId);if(!c)return;
+  var p=pure(c.weight||0,c.purity||999),v=val(p);
+  var g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+  var h="<div class='detail-title'>"+c.name+"</div><div class='detail-year'>"+(c.year||"")+"</div>";
+  if(viewTab==="data"){
+    h+="<div class='detail-section'><h3>Valeur actuelle</h3><div class='detail-price-box'>";
+    h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
+    h+="<div class='detail-price-item'><div class='label'>Gain/Perte</div><div class='value "+(g>=0?"up":"down")+"'>"+(gp!==null?(g>=0?"+":"")+gp+"%":"—")+"</div></div></div></div>";
+    h+="<div class='detail-section'><h3>Achat</h3>";
+    h+="<div class='detail-row'><span class='label'>Prix d'achat</span><span class='value'>"+(c.purchasePrice?fmt(c.purchasePrice):"—")+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Date</span><span class='value'>"+(c.purchaseDate||"—")+"</span></div></div>";
+    if(c.notes)h+="<div class='detail-section'><h3>Notes</h3><div class='detail-notes'>"+c.notes+"</div></div>";
   }else{
-    html+="<div class='detail-section'><h3>Caractéristiques</h3>";
-    html+="<div class='detail-row'><span class='label'>Pays</span><span class='value'>"+(c.country||"—")+"</span></div>";
-    html+="<div class='detail-row'><span class='label'>Année</span><span class='value'>"+(c.year||"—")+"</span></div>";
-    html+="<div class='detail-row'><span class='label'>Poids total</span><span class='value'>"+fmtW(c.weight||0)+"</span></div>";
-    html+="<div class='detail-row'><span class='label'>Titre (pureté)</span><span class='value'>."+(c.purity||999)+"</span></div>";
-    html+="<div class='detail-row'><span class='label'>Argent pur</span><span class='value'>"+fmtW(p)+"</span></div>";
-    html+="</div>";
-    
-    html+="<div class='detail-section'><h3>Valeur</h3>";
-    html+="<div class='detail-price-box'>";
-    html+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div><div class='sub'>au cours actuel</div></div>";
-    html+="<div class='detail-price-item'><div class='label'>Prix/gramme pur</div><div class='value'>"+price.toFixed(2)+" €</div><div class='sub'>cours argent</div></div>";
-    html+="</div></div>";
+    h+="<div class='detail-section'><h3>Caractéristiques</h3>";
+    h+="<div class='detail-row'><span class='label'>Pays</span><span class='value'>"+(c.country||"—")+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Année</span><span class='value'>"+(c.year||"—")+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Poids total</span><span class='value'>"+fmtW(c.weight||0)+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Titre</span><span class='value'>."+(c.purity||999)+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Argent pur</span><span class='value'>"+fmtW(p)+"</span></div></div>";
+    h+="<div class='detail-section'><h3>Valeur</h3><div class='detail-price-box'>";
+    h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
+    h+="<div class='detail-price-item'><div class='label'>Cours</div><div class='value'>"+price.toFixed(2)+"€/g</div></div></div></div>";
   }
-  
-  document.getElementById("detailContent").innerHTML=html;
+  document.getElementById("detailContent").innerHTML=h;
 }
+function editCurrent(){var id=viewId;closeDetail();openForm(id)}
+function deleteCurrent(){document.getElementById("delId").value=viewId;document.getElementById("delModal").classList.add("active")}
 
-function editFromDetail(){
-  closeDetail();
-  setTimeout(function(){openForm(currentDetailId)},100);
-}
-
-function deleteFromDetail(){
-  document.getElementById("delId").value=currentDetailId;
-  document.getElementById("delModal").classList.add("active");
-}
-
-// === PHOTOS ===
-function handlePhoto(e,num){
-  var file=e.target.files[0];
-  if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(ev){
+// FORM
+function handlePhoto(e,n){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
     var img=new Image();
     img.onload=function(){
-      var canvas=document.createElement("canvas");
-      var max=400;
-      var w=img.width,h=img.height;
+      var cv=document.createElement("canvas"),max=400,w=img.width,h=img.height;
       if(w>h){if(w>max){h=h*(max/w);w=max}}else{if(h>max){w=w*(max/h);h=max}}
-      canvas.width=w;canvas.height=h;
-      var ctx=canvas.getContext("2d");
-      ctx.drawImage(img,0,0,w,h);
-      var data=canvas.toDataURL("image/jpeg",0.7);
-      if(num===1){currentPhoto1=data;showPhotoPreview(1,data)}
-      else{currentPhoto2=data;showPhotoPreview(2,data)}
-    };
-    img.src=ev.target.result;
-  };
-  reader.readAsDataURL(file);
+      cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
+      var d=cv.toDataURL("image/jpeg",0.7);
+      if(n===1){photo1=d;document.getElementById("ph1").style.display="none";document.getElementById("img1").src=d;document.getElementById("img1").style.display="block"}
+      else{photo2=d;document.getElementById("ph2").style.display="none";document.getElementById("img2").src=d;document.getElementById("img2").style.display="block"}
+    };img.src=ev.target.result;
+  };r.readAsDataURL(f);
 }
-
-function showPhotoPreview(num,src){
-  document.getElementById("photoPlaceholder"+num).style.display="none";
-  var img=document.getElementById("photoImg"+num);
-  img.src=src;img.style.display="block";
+function resetForm(){
+  photo1=null;photo2=null;
+  document.getElementById("ph1").style.display="block";document.getElementById("ph2").style.display="block";
+  document.getElementById("img1").style.display="none";document.getElementById("img2").style.display="none";
+  document.getElementById("photoInput").value="";document.getElementById("photoInput2").value="";
 }
-
-function resetPhotos(){
-  currentPhoto1=null;currentPhoto2=null;
-  document.getElementById("photoPlaceholder1").style.display="block";
-  document.getElementById("photoPlaceholder2").style.display="block";
-  document.getElementById("photoImg1").style.display="none";
-  document.getElementById("photoImg2").style.display="none";
-  document.getElementById("photoInput").value="";
-  document.getElementById("photoInput2").value="";
-}
-
-// === FORMULAIRE ===
-function onPurityChange(){var s=document.getElementById("fPurity");document.getElementById("customPurityGroup").style.display=s.value==="custom"?"block":"none";calcPreview()}
+function onPurityChange(){document.getElementById("customPurityGroup").style.display=document.getElementById("fPurity").value==="custom"?"block":"none";calcPreview()}
 function getPurity(){var s=document.getElementById("fPurity");return s.value==="custom"?(parseInt(document.getElementById("fCustomPurity").value)||999):(parseInt(s.value)||999)}
+function calcPreview(){var w=parseFloat(document.getElementById("fWeight").value)||0,pu=pure(w,getPurity());document.getElementById("prevPure").textContent=fmtW(pu);document.getElementById("prevValue").textContent=fmt(val(pu))}
 
 function openForm(id){
   document.getElementById("formModal").classList.add("active");
   document.getElementById("formTitle").textContent=id?"Modifier":"Ajouter";
   document.getElementById("customPurityGroup").style.display="none";
-  resetPhotos();
+  resetForm();
   
-  var c=null;
-  if(id)for(var i=0;i<coins.length;i++)if(coins[i].id===id){c=coins[i];break}
-  
+  var c=id?getCoin(id):null;
   document.getElementById("fId").value=c?c.id:"";
   document.getElementById("fName").value=c?c.name||"":"";
   document.getElementById("fCountry").value=c?c.country||"":"";
@@ -454,56 +374,32 @@ function openForm(id){
   document.getElementById("fDate").value=c?c.purchaseDate||"":"";
   document.getElementById("fNotes").value=c?c.notes||"":"";
   
-  if(c&&c.photo){currentPhoto1=c.photo;showPhotoPreview(1,c.photo)}
-  if(c&&c.photo2){currentPhoto2=c.photo2;showPhotoPreview(2,c.photo2)}
+  if(c&&c.photo){photo1=c.photo;document.getElementById("ph1").style.display="none";document.getElementById("img1").src=c.photo;document.getElementById("img1").style.display="block"}
+  if(c&&c.photo2){photo2=c.photo2;document.getElementById("ph2").style.display="none";document.getElementById("img2").src=c.photo2;document.getElementById("img2").style.display="block"}
   
-  var p=c?c.purity||999:999,s=document.getElementById("fPurity"),found=false;
-  for(var i=0;i<s.options.length;i++)if(s.options[i].value===p.toString()){found=true;break}
-  if(found)s.value=p.toString();else{s.value="custom";document.getElementById("customPurityGroup").style.display="block";document.getElementById("fCustomPurity").value=p}
+  var pu=c?c.purity||999:999,sel=document.getElementById("fPurity"),found=false;
+  for(var i=0;i<sel.options.length;i++)if(sel.options[i].value===pu.toString()){found=true;break}
+  if(found)sel.value=pu.toString();else{sel.value="custom";document.getElementById("customPurityGroup").style.display="block";document.getElementById("fCustomPurity").value=pu}
   calcPreview();
 }
-
 function closeForm(){document.getElementById("formModal").classList.remove("active")}
-function calcPreview(){var w=parseFloat(document.getElementById("fWeight").value)||0,p=getPurity(),pur=pure(w,p);document.getElementById("prevPure").textContent=fmtW(pur);document.getElementById("prevValue").textContent=fmt(value(pur))}
 
 function save(){
   var n=document.getElementById("fName").value.trim(),w=parseFloat(document.getElementById("fWeight").value);
   if(!n){alert("Nom requis");return}
   if(!w||w<=0){alert("Poids invalide");return}
-  
-  var d={
-    name:n,
-    country:document.getElementById("fCountry").value.trim(),
-    year:parseInt(document.getElementById("fYear").value)||null,
-    weight:w,
-    purity:getPurity(),
-    purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,
-    purchaseDate:document.getElementById("fDate").value||null,
-    notes:document.getElementById("fNotes").value.trim(),
-    photo:currentPhoto1,
-    photo2:currentPhoto2
-  };
-  
+  var d={name:n,country:document.getElementById("fCountry").value.trim(),year:parseInt(document.getElementById("fYear").value)||null,weight:w,purity:getPurity(),purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,purchaseDate:document.getElementById("fDate").value||null,notes:document.getElementById("fNotes").value.trim(),photo:photo1,photo2:photo2};
   var id=document.getElementById("fId").value;
-  if(id){
-    for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}
-  }else{
-    d.id="c"+Date.now();
-    coins.push(d);
-  }
+  if(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}}
+  else{d.id="c"+Date.now();coins.push(d)}
   saveCoins();updateStats();render();closeForm();
 }
 
-function openDel(id){document.getElementById("delId").value=id;document.getElementById("delModal").classList.add("active")}
 function closeDel(){document.getElementById("delModal").classList.remove("active")}
-function confirmDel(){
-  var id=document.getElementById("delId").value,n=[];
-  for(var i=0;i<coins.length;i++)if(coins[i].id!==id)n.push(coins[i]);
-  coins=n;saveCoins();updateStats();render();closeDel();closeDetail();
-}
-function exportCSV(){if(!coins.length){alert("Vide");return}var r=["Nom;Pays;Annee;Poids;Titre;Pur;Valeur;Achat"];for(var i=0;i<coins.length;i++){var c=coins[i],p=pure(c.weight||0,c.purity||999);r.push([c.name,c.country||"",c.year||"",(c.weight||0).toFixed(3),c.purity||999,p.toFixed(3),value(p).toFixed(2),c.purchasePrice||""].join(";"))}var a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));a.download="collection.csv";a.click()}
+function confirmDel(){var id=document.getElementById("delId").value,n=[];for(var i=0;i<coins.length;i++)if(coins[i].id!==id)n.push(coins[i]);coins=n;saveCoins();updateStats();render();closeDel();closeDetail()}
+function exportCSV(){if(!coins.length){alert("Vide");return}var r=["Nom;Pays;Annee;Poids;Titre;Pur;Valeur;Achat"];for(var i=0;i<coins.length;i++){var c=coins[i],p=pure(c.weight||0,c.purity||999);r.push([c.name,c.country||"",c.year||"",(c.weight||0).toFixed(3),c.purity||999,p.toFixed(3),val(p).toFixed(2),c.purchasePrice||""].join(";"))}var a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));a.download="collection.csv";a.click()}
 
-load();updatePriceDisplay();updateStats();render();fetchPrice();
+load();updatePrice();updateStats();render();fetchPrice();
 </script>
 </body>
 </html>
