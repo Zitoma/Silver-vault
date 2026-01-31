@@ -9,7 +9,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0f;--card:#14141c;--card2:#1a1a24;--text:#f5f5f7;--muted:#71717a;--border:rgba(255,255,255,0.1);--accent:#c9a227;--accent2:#e8a849;--success:#22c55e;--danger:#ef4444}
-body{font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:20px}
 header{background:var(--card);padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .logo{display:flex;align-items:center;gap:10px}
@@ -32,28 +32,31 @@ header{background:var(--card);padding:16px;border-bottom:1px solid var(--border)
 .price-edit-row{display:flex;gap:10px;margin-bottom:12px}
 .price-edit-row input{flex:1;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:600}
 .price-edit-row button{padding:14px 24px;background:var(--accent);border:none;border-radius:10px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
-.price-links{display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border)}
-.price-links span{font-size:11px;color:var(--muted);width:100%;margin-bottom:4px}
-.price-links a{padding:8px 14px;background:var(--card);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;border:1px solid var(--border)}
 main{padding:16px}
-.actions{display:flex;gap:10px;margin-bottom:16px}
-.search-box{flex:1;position:relative}
+.actions{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-box{flex:1;min-width:150px;position:relative}
 .search-box input{width:100%;padding:12px 16px 12px 40px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px}
 .search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%)}
-.btn-add{background:var(--accent);border:none;color:var(--bg);padding:12px 20px;border-radius:12px;font-weight:600;cursor:pointer;font-size:20px}
-.btn-export{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer}
+.btn-add{background:var(--accent);border:none;color:var(--bg);padding:12px 16px;border-radius:12px;font-weight:600;cursor:pointer;font-size:18px}
+.btn-icon{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:12px;cursor:pointer;font-size:16px}
+.sort-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.sort-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap}
+.sort-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
 .coins-list{display:flex;flex-direction:column;gap:12px}
 .coin-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:transform 0.1s}
 .coin-card:active{transform:scale(0.98)}
 .coin-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.coin-icon{width:50px;height:50px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden}
+.coin-icon{width:50px;height:50px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;position:relative}
 .coin-icon img{width:100%;height:100%;object-fit:cover}
+.coin-qty{position:absolute;top:-4px;right:-4px;background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
 .coin-info{flex:1;min-width:0}
-.coin-info h3{font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coin-info h3{font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+.coin-info h3 .flag{font-size:14px}
 .coin-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);flex-wrap:wrap}
 .purity-badge{background:#a8a8a8;color:#000;padding:2px 8px;border-radius:8px;font-weight:600;font-size:11px}
 .coin-value{text-align:right;flex-shrink:0}
 .coin-value .main{font-size:17px;font-weight:700}
+.coin-value .premium{font-size:11px;color:var(--accent2)}
 .coin-value .change{font-size:11px}
 .coin-value .change.up{color:var(--success)}
 .coin-value .change.down{color:var(--danger)}
@@ -63,6 +66,17 @@ main{padding:16px}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty-state .icon{font-size:48px;margin-bottom:16px}
 .empty-state h3{color:var(--text);margin-bottom:8px}
+
+/* CHART */
+.chart-section{background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px}
+.chart-section h3{font-size:14px;margin-bottom:12px;color:var(--muted)}
+.chart-container{height:150px;display:flex;align-items:flex-end;gap:4px;padding-top:20px;position:relative}
+.chart-bar{flex:1;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:4px 4px 0 0;min-height:4px;position:relative}
+.chart-bar:hover::after{content:attr(data-val);position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:var(--card2);padding:2px 6px;border-radius:4px;font-size:10px;white-space:nowrap}
+.chart-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--muted)}
+.chart-empty{text-align:center;color:var(--muted);padding:40px;font-size:13px}
+
+/* MODALS */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .modal.active{display:flex}
 .modal-content{background:var(--card);border-radius:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
@@ -74,18 +88,25 @@ main{padding:16px}
 .form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.calc-preview{background:rgba(201,162,39,0.15);border:1px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-around;font-size:14px}
-.calc-preview strong{color:var(--accent);font-size:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.calc-preview{background:rgba(201,162,39,0.15);border:1px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:16px}
+.calc-preview-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.calc-preview-row:last-child{margin-bottom:0;padding-top:8px;border-top:1px solid var(--border)}
+.calc-preview-row span{color:var(--muted);font-size:13px}
+.calc-preview-row strong{color:var(--accent);font-size:15px}
+.calc-preview-row strong.total{font-size:18px}
 .modal-footer{display:flex;gap:12px;padding:20px;border-top:1px solid var(--border)}
 .btn-cancel{flex:1;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;font-size:16px}
 .btn-save{flex:1;padding:16px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .photo-section{margin-bottom:16px}
-.photo-preview{width:100%;height:120px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+.photo-preview{width:100%;height:100px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
 .photo-preview img{width:100%;height:100%;object-fit:cover}
 .photo-preview .placeholder{text-align:center;color:var(--muted)}
-.photo-preview .placeholder span{font-size:32px;display:block;margin-bottom:4px}
+.photo-preview .placeholder span{font-size:28px;display:block}
 #photoInput,#photoInput2{display:none}
+
+/* DETAIL VIEW */
 .detail-view{display:none;position:fixed;inset:0;background:var(--bg);z-index:1001;overflow-y:auto}
 .detail-view.active{display:block}
 .detail-header{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--card);position:sticky;top:0;z-index:10}
@@ -93,16 +114,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .btn-back,.btn-settings{width:44px;height:44px;border-radius:12px;border:none;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
 .btn-back{background:var(--accent);color:var(--bg)}
 .btn-settings{background:var(--accent);color:var(--bg)}
-.detail-photo{background:var(--card2);margin:16px;border-radius:16px;padding:20px;display:flex;justify-content:center;align-items:center;min-height:200px}
-.detail-photo img{max-width:100%;max-height:250px;border-radius:12px;object-fit:contain}
+.detail-photo{background:var(--card2);margin:16px;border-radius:16px;padding:20px;display:flex;justify-content:center;align-items:center;min-height:180px}
+.detail-photo img{max-width:100%;max-height:220px;border-radius:12px;object-fit:contain}
 .detail-photo .no-photo{font-size:80px;opacity:0.3}
 .detail-photos-dual{display:flex;gap:12px;justify-content:center}
-.detail-photos-dual img{max-width:45%;max-height:200px;border-radius:12px;object-fit:contain}
+.detail-photos-dual img{max-width:45%;max-height:180px;border-radius:12px;object-fit:contain}
 .detail-tabs{display:flex;margin:0 16px;background:var(--card);border-radius:12px;padding:4px}
 .detail-tab{flex:1;padding:12px;text-align:center;border-radius:10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all 0.2s}
 .detail-tab.active{background:var(--accent2);color:var(--bg);font-weight:600}
 .detail-content{padding:16px}
-.detail-title{font-size:24px;font-weight:700;margin-bottom:4px}
+.detail-title{font-size:22px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.detail-title .flag{font-size:20px}
 .detail-year{color:var(--muted);font-size:16px;margin-bottom:20px}
 .detail-section{margin-bottom:24px}
 .detail-section h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--accent2)}
@@ -111,16 +133,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .detail-row .value{font-size:16px;font-weight:600}
 .detail-row .value.up{color:var(--success)}
 .detail-row .value.down{color:var(--danger)}
+.detail-row .value.premium{color:var(--accent2)}
 .detail-price-box{background:var(--card);border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .detail-price-item{text-align:center}
 .detail-price-item .label{font-size:11px;color:var(--muted);margin-bottom:4px}
-.detail-price-item .value{font-size:20px;font-weight:700}
+.detail-price-item .value{font-size:18px;font-weight:700}
 .detail-price-item .sub{font-size:11px;color:var(--muted)}
 .detail-notes{background:var(--card);border-radius:12px;padding:16px;color:var(--muted);font-size:14px;line-height:1.5}
 .detail-actions{display:flex;gap:12px;padding:16px}
 .detail-actions button{flex:1;padding:16px;border-radius:12px;font-size:16px;cursor:pointer;border:none}
 .btn-edit{background:var(--card2);color:var(--text)}
 .btn-delete{background:rgba(239,68,68,0.15);color:var(--danger)}
+
+/* IMPORT */
+.import-zone{border:2px dashed var(--border);border-radius:12px;padding:30px;text-align:center;color:var(--muted);cursor:pointer;margin-bottom:16px}
+.import-zone:hover{border-color:var(--accent);color:var(--text)}
+#csvInput{display:none}
 </style>
 </head>
 <body>
@@ -144,18 +172,25 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 <input type="number" id="manualInput" step="0.01" placeholder="3.12" inputmode="decimal">
 <button onclick="setManualPrice()">OK</button>
 </div>
-<div class="price-links">
-<span>Vérifier le cours :</span>
-<a href="https://goldpricez.com/silver-rates/europe/gram" target="_blank">GoldPriceZ</a>
-<a href="https://www.google.com/search?q=cours+argent+euro+gramme" target="_blank">Google</a>
-</div>
 </div>
 </header>
 <main>
 <div class="actions">
 <div class="search-box"><input type="text" id="searchInput" placeholder="Rechercher..." oninput="render()"></div>
 <button class="btn-add" onclick="openForm(null)">+</button>
-<button class="btn-export" onclick="exportCSV()">📥</button>
+<button class="btn-icon" onclick="openImport()">📥</button>
+<button class="btn-icon" onclick="exportCSV()">📤</button>
+</div>
+<div class="sort-row">
+<button class="sort-btn active" onclick="setSort('date')">📅 Récent</button>
+<button class="sort-btn" onclick="setSort('value')">💰 Valeur</button>
+<button class="sort-btn" onclick="setSort('weight')">⚖️ Poids</button>
+<button class="sort-btn" onclick="setSort('country')">🌍 Pays</button>
+<button class="sort-btn" onclick="setSort('name')">🔤 Nom</button>
+</div>
+<div class="chart-section">
+<h3>📈 Évolution de la collection</h3>
+<div id="chartContainer"></div>
 </div>
 <div id="list" class="coins-list"></div>
 </main>
@@ -187,27 +222,28 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 <input type="file" id="photoInput2" accept="image/*" onchange="handlePhoto(event,2)">
 <div class="form-row">
 <div class="photo-section">
-<label>Photo avant</label>
+<label>Avant</label>
 <div class="photo-preview" onclick="document.getElementById('photoInput').click()">
-<div class="placeholder" id="ph1"><span>📷</span><small>Avant</small></div>
+<div class="placeholder" id="ph1"><span>📷</span></div>
 <img id="img1" style="display:none">
 </div>
 </div>
 <div class="photo-section">
-<label>Photo arrière</label>
+<label>Arrière</label>
 <div class="photo-preview" onclick="document.getElementById('photoInput2').click()">
-<div class="placeholder" id="ph2"><span>📷</span><small>Arrière</small></div>
+<div class="placeholder" id="ph2"><span>📷</span></div>
 <img id="img2" style="display:none">
 </div>
 </div>
 </div>
 <div class="form-group"><label>Nom *</label><input type="text" id="fName" placeholder="American Silver Eagle"></div>
-<div class="form-row">
+<div class="form-row-3">
 <div class="form-group"><label>Pays</label><input type="text" id="fCountry" placeholder="USA"></div>
 <div class="form-group"><label>Année</label><input type="number" id="fYear" inputmode="numeric"></div>
+<div class="form-group"><label>Quantité</label><input type="number" id="fQty" value="1" min="1" inputmode="numeric" oninput="calcPreview()"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Poids (g) *</label><input type="number" id="fWeight" step="0.001" placeholder="31.103" oninput="calcPreview()" inputmode="decimal"></div>
+<div class="form-group"><label>Poids unitaire (g) *</label><input type="number" id="fWeight" step="0.001" placeholder="31.103" oninput="calcPreview()" inputmode="decimal"></div>
 <div class="form-group"><label>Titre</label>
 <select id="fPurity" onchange="onPurityChange()">
 <option value="999">.999</option><option value="980">.980</option><option value="970">.970</option>
@@ -224,14 +260,41 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 <div class="form-group" id="customPurityGroup" style="display:none"><label>Pureté (1-999)</label><input type="number" id="fCustomPurity" min="1" max="999" oninput="calcPreview()" inputmode="numeric"></div>
-<div class="calc-preview"><div>Pur: <strong id="prevPure">0 g</strong></div><div>Valeur: <strong id="prevValue">0 €</strong></div></div>
 <div class="form-row">
-<div class="form-group"><label>Prix achat (€)</label><input type="number" id="fPrice" step="0.01" inputmode="decimal"></div>
+<div class="form-group"><label>Prix achat total (€)</label><input type="number" id="fPrice" step="0.01" inputmode="decimal" oninput="calcPreview()"></div>
+<div class="form-group"><label>Valeur numismatique (€)</label><input type="number" id="fPremium" step="0.01" inputmode="decimal" placeholder="Optionnel" oninput="calcPreview()"></div>
+</div>
+<div class="calc-preview">
+<div class="calc-preview-row"><span>Argent pur (total)</span><strong id="prevPure">0 g</strong></div>
+<div class="calc-preview-row"><span>Valeur métal</span><strong id="prevMetal">0 €</strong></div>
+<div class="calc-preview-row"><span>Valeur numismatique</span><strong id="prevPremium">—</strong></div>
+<div class="calc-preview-row"><span>Valeur totale</span><strong class="total" id="prevValue">0 €</strong></div>
+</div>
+<div class="form-row">
 <div class="form-group"><label>Date achat</label><input type="date" id="fDate"></div>
 </div>
 <div class="form-group"><label>Notes</label><textarea id="fNotes" rows="2"></textarea></div>
 </div>
 <div class="modal-footer"><button class="btn-cancel" onclick="closeForm()">Annuler</button><button class="btn-save" onclick="save()">Enregistrer</button></div>
+</div>
+</div>
+
+<div class="modal" id="importModal">
+<div class="modal-content">
+<div class="modal-header"><h2>Importer CSV</h2><button class="btn-close" onclick="closeImport()">✕</button></div>
+<div class="modal-body">
+<input type="file" id="csvInput" accept=".csv" onchange="handleCSV(event)">
+<div class="import-zone" onclick="document.getElementById('csvInput').click()">
+<div style="font-size:40px;margin-bottom:10px">📄</div>
+<div>Appuyez pour sélectionner un fichier CSV</div>
+<div style="font-size:12px;margin-top:8px">Format: Nom;Pays;Année;Poids;Titre;...</div>
+</div>
+<div id="importPreview"></div>
+</div>
+<div class="modal-footer">
+<button class="btn-cancel" onclick="closeImport()">Annuler</button>
+<button class="btn-save" id="btnImport" onclick="confirmImport()" style="display:none">Importer</button>
+</div>
 </div>
 </div>
 
@@ -248,8 +311,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <script>
-var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins";
-var photo1=null,photo2=null,viewId=null,viewTab="data";
+var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins",HKEY="silver_vault_history";
+var photo1=null,photo2=null,viewId=null,viewTab="data",sortBy="date",importData=[];
+
+var FLAGS={"france":"🇫🇷","suisse":"🇨🇭","switzerland":"🇨🇭","usa":"🇺🇸","etats-unis":"🇺🇸","états-unis":"🇺🇸","united states":"🇺🇸","allemagne":"🇩🇪","germany":"🇩🇪","belgique":"🇧🇪","belgium":"🇧🇪","italie":"🇮🇹","italy":"🇮🇹","espagne":"🇪🇸","spain":"🇪🇸","royaume-uni":"🇬🇧","uk":"🇬🇧","united kingdom":"🇬🇧","angleterre":"🇬🇧","canada":"🇨🇦","australie":"🇦🇺","australia":"🇦🇺","autriche":"🇦🇹","austria":"🇦🇹","pays-bas":"🇳🇱","netherlands":"🇳🇱","portugal":"🇵🇹","grece":"🇬🇷","greece":"🇬🇷","mexique":"🇲🇽","mexico":"🇲🇽","chine":"🇨🇳","china":"🇨🇳","japon":"🇯🇵","japan":"🇯🇵","russie":"🇷🇺","russia":"🇷🇺","afrique":"🌍","chad":"🇹🇩","tchad":"🇹🇩","congo":"🇨🇬","cameroun":"🇨🇲","gabon":"🇬🇦"};
+
+function getFlag(country){
+  if(!country)return"";
+  var c=country.toLowerCase().trim();
+  return FLAGS[c]||"";
+}
 
 function load(){
   var k=["silver_vault_coins","sv2_coins","sv_coins"];
@@ -259,40 +330,129 @@ function load(){
   var pk=["silver_vault_price","sv2_price"];
   for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}
 }
-function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins))}catch(e){}}
+function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins));saveHistory()}catch(e){}}
 function savePrice(){try{localStorage.setItem("silver_vault_price",price.toString())}catch(e){}}
 
+function saveHistory(){
+  try{
+    var h=JSON.parse(localStorage.getItem(HKEY)||"[]");
+    var today=new Date().toISOString().split("T")[0];
+    var total=0;
+    for(var i=0;i<coins.length;i++){
+      var c=coins[i],q=c.qty||1;
+      total+=val(pure(c.weight||0,c.purity||999))*q;
+    }
+    if(h.length===0||h[h.length-1].date!==today){
+      h.push({date:today,value:Math.round(total*100)/100});
+      if(h.length>30)h=h.slice(-30);
+      localStorage.setItem(HKEY,JSON.stringify(h));
+    }else{
+      h[h.length-1].value=Math.round(total*100)/100;
+      localStorage.setItem(HKEY,JSON.stringify(h));
+    }
+  }catch(e){}
+}
+
+function getHistory(){
+  try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}
+}
+
 function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show")){document.getElementById("manualInput").value=price.toFixed(2)}}
-function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePrice();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
-function updatePrice(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
-function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePrice();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
+function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePriceUI();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
+function updatePriceUI(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
+function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePriceUI();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
 
 function pure(w,p){return(w*p)/1000}
 function val(p){return p*price}
 function fmt(v){return v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
 function fmtW(v){return v.toFixed(3)+" g"}
-function updateStats(){var t=0;for(var i=0;i<coins.length;i++)t+=pure(coins[i].weight||0,coins[i].purity||999);document.getElementById("statValue").textContent=fmt(val(t));document.getElementById("statPure").textContent=fmtW(t);document.getElementById("statCount").textContent=coins.length}
+function updateStats(){
+  var t=0,w=0,n=0;
+  for(var i=0;i<coins.length;i++){
+    var c=coins[i],q=c.qty||1;
+    t+=val(pure(c.weight||0,c.purity||999))*q;
+    w+=pure(c.weight||0,c.purity||999)*q;
+    n+=q;
+  }
+  document.getElementById("statValue").textContent=fmt(t);
+  document.getElementById("statPure").textContent=fmtW(w);
+  document.getElementById("statCount").textContent=n;
+}
 
 function getCoin(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id)return coins[i];return null}
 
+function setSort(s){
+  sortBy=s;
+  document.querySelectorAll(".sort-btn").forEach(function(b){b.classList.remove("active")});
+  event.target.classList.add("active");
+  render();
+}
+
+function sortCoins(arr){
+  var sorted=arr.slice();
+  sorted.sort(function(a,b){
+    if(sortBy==="value"){
+      var va=val(pure(a.weight||0,a.purity||999))*(a.qty||1);
+      var vb=val(pure(b.weight||0,b.purity||999))*(b.qty||1);
+      return vb-va;
+    }
+    if(sortBy==="weight"){
+      var wa=pure(a.weight||0,a.purity||999)*(a.qty||1);
+      var wb=pure(b.weight||0,b.purity||999)*(b.qty||1);
+      return wb-wa;
+    }
+    if(sortBy==="country")return(a.country||"").localeCompare(b.country||"");
+    if(sortBy==="name")return(a.name||"").localeCompare(b.name||"");
+    return(b.id||"").localeCompare(a.id||"");
+  });
+  return sorted;
+}
+
+function renderChart(){
+  var h=getHistory();
+  var container=document.getElementById("chartContainer");
+  if(h.length<2){
+    container.innerHTML="<div class='chart-empty'>Ajoutez des pièces pour voir l'évolution</div>";
+    return;
+  }
+  var max=Math.max.apply(null,h.map(function(x){return x.value}));
+  var bars="";
+  for(var i=0;i<h.length;i++){
+    var pct=max>0?(h[i].value/max)*100:0;
+    bars+="<div class='chart-bar' style='height:"+pct+"%' data-val='"+fmt(h[i].value)+"'></div>";
+  }
+  var labels="<span>"+h[0].date.slice(5)+"</span><span>"+h[h.length-1].date.slice(5)+"</span>";
+  container.innerHTML="<div class='chart-container'>"+bars+"</div><div class='chart-labels'>"+labels+"</div>";
+}
+
 function render(){
+  renderChart();
   var q=document.getElementById("searchInput").value.toLowerCase(),list=document.getElementById("list"),f=[];
   for(var i=0;i<coins.length;i++){var c=coins[i];if(!q||(c.name&&c.name.toLowerCase().indexOf(q)>=0)||(c.country&&c.country.toLowerCase().indexOf(q)>=0))f.push(c)}
+  f=sortCoins(f);
   if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}
-  var h="";
+  var html="";
   for(var i=0;i<f.length;i++){
-    var c=f[i],p=pure(c.weight||0,c.purity||999),v=val(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+    var c=f[i],qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,v=val(p);
+    var prem=c.premium?c.premium*qty:null;
+    var totalVal=prem?prem:v;
+    var g=c.purchasePrice?totalVal-c.purchasePrice:null;
+    var gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
     var ic=c.photo?"<img src='"+c.photo+"'>":"🏛️";
-    h+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+ic+"</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
+    var flag=getFlag(c.country);
+    var qtyBadge=qty>1?"<span class='coin-qty'>x"+qty+"</span>":"";
+    var premLine=prem?"<div class='premium'>Numis: "+fmt(prem)+"</div>":"";
+    html+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+ic+qtyBadge+"</div><div class='coin-info'><h3>"+(flag?"<span class='flag'>"+flag+"</span>":"")+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(totalVal)+"</div>"+premLine+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Poids total</span><br><strong>"+fmtW((c.weight||0)*qty)+"</strong></div><div><span>Argent pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
   }
-  list.innerHTML=h
+  list.innerHTML=html
 }
 
 // DETAIL VIEW
 function openDetail(id){
   viewId=id;viewTab="data";
   var c=getCoin(id);if(!c)return;
-  document.getElementById("detailName").textContent=c.name||"Sans nom";
+  var flag=getFlag(c.country);
+  document.getElementById("detailName").textContent=(flag?flag+" ":"")+(c.name||"Sans nom");
   var ph=document.getElementById("detailPhoto");
   if(c.photo&&c.photo2)ph.innerHTML="<div class='detail-photos-dual'><img src='"+c.photo+"'><img src='"+c.photo2+"'></div>";
   else if(c.photo)ph.innerHTML="<img src='"+c.photo+"'>";
@@ -305,27 +465,34 @@ function switchTab(t){viewTab=t;updateTabs();renderDetail()}
 function updateTabs(){document.getElementById("tabData").classList.toggle("active",viewTab==="data");document.getElementById("tabInfo").classList.toggle("active",viewTab==="info")}
 function renderDetail(){
   var c=getCoin(viewId);if(!c)return;
-  var p=pure(c.weight||0,c.purity||999),v=val(p);
-  var g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
-  var h="<div class='detail-title'>"+c.name+"</div><div class='detail-year'>"+(c.year||"")+"</div>";
+  var qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,v=val(p);
+  var prem=c.premium?c.premium*qty:null;
+  var totalVal=prem||v;
+  var g=c.purchasePrice?totalVal-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+  var flag=getFlag(c.country);
+  var h="<div class='detail-title'>"+(flag?"<span class='flag'>"+flag+"</span>":"")+c.name+(qty>1?" <span style='color:var(--muted)'>(x"+qty+")</span>":"")+"</div><div class='detail-year'>"+(c.year||"")+"</div>";
   if(viewTab==="data"){
-    h+="<div class='detail-section'><h3>Valeur actuelle</h3><div class='detail-price-box'>";
+    h+="<div class='detail-section'><h3>💰 Valeur actuelle</h3><div class='detail-price-box'>";
     h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
     h+="<div class='detail-price-item'><div class='label'>Gain/Perte</div><div class='value "+(g>=0?"up":"down")+"'>"+(gp!==null?(g>=0?"+":"")+gp+"%":"—")+"</div></div></div></div>";
-    h+="<div class='detail-section'><h3>Achat</h3>";
+    if(prem){
+      h+="<div class='detail-section'><h3>⭐ Valeur numismatique</h3>";
+      h+="<div class='detail-row'><span class='label'>Cote premium</span><span class='value premium'>"+fmt(prem)+"</span></div>";
+      h+="<div class='detail-row'><span class='label'>Prime vs métal</span><span class='value premium'>+"+(((prem/v)-1)*100).toFixed(0)+"%</span></div></div>";
+    }
+    h+="<div class='detail-section'><h3>🛒 Achat</h3>";
     h+="<div class='detail-row'><span class='label'>Prix d'achat</span><span class='value'>"+(c.purchasePrice?fmt(c.purchasePrice):"—")+"</span></div>";
     h+="<div class='detail-row'><span class='label'>Date</span><span class='value'>"+(c.purchaseDate||"—")+"</span></div></div>";
-    if(c.notes)h+="<div class='detail-section'><h3>Notes</h3><div class='detail-notes'>"+c.notes+"</div></div>";
+    if(c.notes)h+="<div class='detail-section'><h3>📝 Notes</h3><div class='detail-notes'>"+c.notes+"</div></div>";
   }else{
-    h+="<div class='detail-section'><h3>Caractéristiques</h3>";
-    h+="<div class='detail-row'><span class='label'>Pays</span><span class='value'>"+(c.country||"—")+"</span></div>";
+    h+="<div class='detail-section'><h3>📋 Caractéristiques</h3>";
+    h+="<div class='detail-row'><span class='label'>Pays</span><span class='value'>"+(flag?flag+" ":"")+(c.country||"—")+"</span></div>";
     h+="<div class='detail-row'><span class='label'>Année</span><span class='value'>"+(c.year||"—")+"</span></div>";
-    h+="<div class='detail-row'><span class='label'>Poids total</span><span class='value'>"+fmtW(c.weight||0)+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Quantité</span><span class='value'>"+qty+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Poids unitaire</span><span class='value'>"+fmtW(c.weight||0)+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Poids total</span><span class='value'>"+fmtW((c.weight||0)*qty)+"</span></div>";
     h+="<div class='detail-row'><span class='label'>Titre</span><span class='value'>."+(c.purity||999)+"</span></div>";
-    h+="<div class='detail-row'><span class='label'>Argent pur</span><span class='value'>"+fmtW(p)+"</span></div></div>";
-    h+="<div class='detail-section'><h3>Valeur</h3><div class='detail-price-box'>";
-    h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
-    h+="<div class='detail-price-item'><div class='label'>Cours</div><div class='value'>"+price.toFixed(2)+"€/g</div></div></div></div>";
+    h+="<div class='detail-row'><span class='label'>Argent pur total</span><span class='value'>"+fmtW(p)+"</span></div></div>";
   }
   document.getElementById("detailContent").innerHTML=h;
 }
@@ -356,7 +523,18 @@ function resetForm(){
 }
 function onPurityChange(){document.getElementById("customPurityGroup").style.display=document.getElementById("fPurity").value==="custom"?"block":"none";calcPreview()}
 function getPurity(){var s=document.getElementById("fPurity");return s.value==="custom"?(parseInt(document.getElementById("fCustomPurity").value)||999):(parseInt(s.value)||999)}
-function calcPreview(){var w=parseFloat(document.getElementById("fWeight").value)||0,pu=pure(w,getPurity());document.getElementById("prevPure").textContent=fmtW(pu);document.getElementById("prevValue").textContent=fmt(val(pu))}
+function calcPreview(){
+  var w=parseFloat(document.getElementById("fWeight").value)||0;
+  var qty=parseInt(document.getElementById("fQty").value)||1;
+  var pu=pure(w,getPurity())*qty;
+  var metal=val(pu);
+  var prem=parseFloat(document.getElementById("fPremium").value)||0;
+  var total=prem>0?prem:metal;
+  document.getElementById("prevPure").textContent=fmtW(pu);
+  document.getElementById("prevMetal").textContent=fmt(metal);
+  document.getElementById("prevPremium").textContent=prem>0?fmt(prem):"—";
+  document.getElementById("prevValue").textContent=fmt(total);
+}
 
 function openForm(id){
   document.getElementById("formModal").classList.add("active");
@@ -369,8 +547,10 @@ function openForm(id){
   document.getElementById("fName").value=c?c.name||"":"";
   document.getElementById("fCountry").value=c?c.country||"":"";
   document.getElementById("fYear").value=c?c.year||new Date().getFullYear():new Date().getFullYear();
+  document.getElementById("fQty").value=c?c.qty||1:1;
   document.getElementById("fWeight").value=c?c.weight||"":"";
   document.getElementById("fPrice").value=c?c.purchasePrice||"":"";
+  document.getElementById("fPremium").value=c?c.premium||"":"";
   document.getElementById("fDate").value=c?c.purchaseDate||"":"";
   document.getElementById("fNotes").value=c?c.notes||"":"";
   
@@ -388,18 +568,85 @@ function save(){
   var n=document.getElementById("fName").value.trim(),w=parseFloat(document.getElementById("fWeight").value);
   if(!n){alert("Nom requis");return}
   if(!w||w<=0){alert("Poids invalide");return}
-  var d={name:n,country:document.getElementById("fCountry").value.trim(),year:parseInt(document.getElementById("fYear").value)||null,weight:w,purity:getPurity(),purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,purchaseDate:document.getElementById("fDate").value||null,notes:document.getElementById("fNotes").value.trim(),photo:photo1,photo2:photo2};
+  var d={
+    name:n,
+    country:document.getElementById("fCountry").value.trim(),
+    year:parseInt(document.getElementById("fYear").value)||null,
+    qty:parseInt(document.getElementById("fQty").value)||1,
+    weight:w,
+    purity:getPurity(),
+    purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,
+    premium:parseFloat(document.getElementById("fPremium").value)||null,
+    purchaseDate:document.getElementById("fDate").value||null,
+    notes:document.getElementById("fNotes").value.trim(),
+    photo:photo1,
+    photo2:photo2
+  };
   var id=document.getElementById("fId").value;
   if(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}}
   else{d.id="c"+Date.now();coins.push(d)}
   saveCoins();updateStats();render();closeForm();
 }
 
+// IMPORT/EXPORT
+function openImport(){document.getElementById("importModal").classList.add("active");document.getElementById("importPreview").innerHTML="";document.getElementById("btnImport").style.display="none";importData=[]}
+function closeImport(){document.getElementById("importModal").classList.remove("active");document.getElementById("csvInput").value=""}
+
+function handleCSV(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    var lines=ev.target.result.split("\n");
+    importData=[];
+    for(var i=1;i<lines.length;i++){
+      var cols=lines[i].split(";");
+      if(cols.length>=4&&cols[0].trim()){
+        importData.push({
+          name:cols[0].trim(),
+          country:cols[1]?cols[1].trim():"",
+          year:parseInt(cols[2])||null,
+          weight:parseFloat(cols[3])||0,
+          purity:parseInt(cols[4])||999,
+          purchasePrice:parseFloat(cols[7])||null
+        });
+      }
+    }
+    if(importData.length>0){
+      document.getElementById("importPreview").innerHTML="<div style='color:var(--success);margin-bottom:10px'>✓ "+importData.length+" pièces trouvées</div><div style='font-size:12px;color:var(--muted);max-height:150px;overflow:auto'>"+importData.map(function(c){return c.name}).join("<br>")+"</div>";
+      document.getElementById("btnImport").style.display="block";
+    }else{
+      document.getElementById("importPreview").innerHTML="<div style='color:var(--danger)'>Aucune pièce trouvée</div>";
+    }
+  };
+  r.readAsText(f);
+}
+
+function confirmImport(){
+  for(var i=0;i<importData.length;i++){
+    importData[i].id="c"+Date.now()+i;
+    coins.push(importData[i]);
+  }
+  saveCoins();updateStats();render();closeImport();
+  alert(importData.length+" pièces importées !");
+}
+
 function closeDel(){document.getElementById("delModal").classList.remove("active")}
 function confirmDel(){var id=document.getElementById("delId").value,n=[];for(var i=0;i<coins.length;i++)if(coins[i].id!==id)n.push(coins[i]);coins=n;saveCoins();updateStats();render();closeDel();closeDetail()}
-function exportCSV(){if(!coins.length){alert("Vide");return}var r=["Nom;Pays;Annee;Poids;Titre;Pur;Valeur;Achat"];for(var i=0;i<coins.length;i++){var c=coins[i],p=pure(c.weight||0,c.purity||999);r.push([c.name,c.country||"",c.year||"",(c.weight||0).toFixed(3),c.purity||999,p.toFixed(3),val(p).toFixed(2),c.purchasePrice||""].join(";"))}var a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));a.download="collection.csv";a.click()}
 
-load();updatePrice();updateStats();render();fetchPrice();
+function exportCSV(){
+  if(!coins.length){alert("Vide");return}
+  var r=["Nom;Pays;Annee;Poids;Titre;Quantite;Pur;Valeur;Achat;Premium"];
+  for(var i=0;i<coins.length;i++){
+    var c=coins[i],qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty;
+    r.push([c.name,c.country||"",c.year||"",c.weight||0,c.purity||999,qty,p.toFixed(3),val(p).toFixed(2),c.purchasePrice||"",c.premium||""].join(";"));
+  }
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));
+  a.download="silver_vault_"+new Date().toISOString().split("T")[0]+".csv";
+  a.click();
+}
+
+load();updatePriceUI();updateStats();render();fetchPrice();
 </script>
 </body>
 </html>
