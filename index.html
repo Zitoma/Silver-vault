@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Silver Vault</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -44,7 +45,8 @@ main{padding:16px}
 .coins-list{display:flex;flex-direction:column;gap:12px}
 .coin-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
 .coin-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.coin-icon{width:50px;height:50px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.coin-icon{width:50px;height:50px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden}
+.coin-icon img{width:100%;height:100%;object-fit:cover}
 .coin-info{flex:1;min-width:0}
 .coin-info h3{font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .coin-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);flex-wrap:wrap}
@@ -81,6 +83,17 @@ main{padding:16px}
 .btn-cancel{flex:1;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;font-size:16px}
 .btn-save{flex:1;padding:16px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+.photo-section{margin-bottom:16px}
+.photo-preview{width:100%;height:150px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-preview .placeholder{text-align:center;color:var(--muted)}
+.photo-preview .placeholder span{font-size:40px;display:block;margin-bottom:8px}
+.photo-actions{display:flex;gap:8px;margin-top:8px}
+.photo-actions button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-size:13px}
+.btn-camera{background:var(--accent);color:var(--bg)}
+.btn-gallery{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-remove-photo{background:rgba(239,68,68,0.15);color:var(--danger)}
+#photoInput{display:none}
 </style>
 </head>
 <body>
@@ -124,6 +137,23 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 <div class="modal-header"><h2 id="formTitle">Ajouter</h2><button class="btn-close" onclick="closeForm()">✕</button></div>
 <div class="modal-body">
 <input type="hidden" id="fId">
+<input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
+
+<div class="photo-section">
+<label>Photo de la pièce</label>
+<div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
+<div class="placeholder" id="photoPlaceholder">
+<span>📷</span>
+<small>Appuyez pour ajouter une photo</small>
+</div>
+<img id="photoImg" style="display:none">
+</div>
+<div class="photo-actions" id="photoActions" style="display:none">
+<button class="btn-gallery" onclick="document.getElementById('photoInput').click()">📁 Changer</button>
+<button class="btn-remove-photo" onclick="removePhoto()">🗑️ Supprimer</button>
+</div>
+</div>
+
 <div class="form-group"><label>Nom *</label><input type="text" id="fName" placeholder="American Silver Eagle"></div>
 <div class="form-row">
 <div class="form-group"><label>Pays</label><input type="text" id="fCountry" placeholder="USA"></div>
@@ -169,7 +199,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 <script>
-var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins";
+var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins",currentPhoto=null;
+
 function load(){var k=["silver_vault_coins","sv2_coins","sv_coins"];for(var i=0;i<k.length;i++){try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}}var pk=["silver_vault_price","sv2_price"];for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}}
 function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins))}catch(e){}}
 function savePrice(){try{localStorage.setItem("silver_vault_price",price.toString())}catch(e){}}
@@ -182,18 +213,126 @@ function value(p){return p*price}
 function fmt(v){return v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
 function fmtW(v){return v.toFixed(3)+" g"}
 function updateStats(){var t=0;for(var i=0;i<coins.length;i++)t+=pure(coins[i].weight||0,coins[i].purity||999);document.getElementById("statValue").textContent=fmt(value(t));document.getElementById("statPure").textContent=fmtW(t);document.getElementById("statCount").textContent=coins.length}
-function render(){var q=document.getElementById("searchInput").value.toLowerCase(),list=document.getElementById("list"),f=[];for(var i=0;i<coins.length;i++){var c=coins[i];if(!q||(c.name&&c.name.toLowerCase().indexOf(q)>=0)||(c.country&&c.country.toLowerCase().indexOf(q)>=0))f.push(c)}if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}var h="";for(var i=0;i<f.length;i++){var c=f[i],p=pure(c.weight||0,c.purity||999),v=value(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;h+="<div class='coin-card'><div class='coin-header'><div class='coin-icon'>🪙</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div><div class='coin-actions'><button class='btn-edit' onclick=\"edit('"+c.id+"')\">Modifier</button><button class='btn-delete' onclick=\"openDel('"+c.id+"')\">🗑️</button></div></div>"}list.innerHTML=h}
+
+function render(){
+  var q=document.getElementById("searchInput").value.toLowerCase(),list=document.getElementById("list"),f=[];
+  for(var i=0;i<coins.length;i++){var c=coins[i];if(!q||(c.name&&c.name.toLowerCase().indexOf(q)>=0)||(c.country&&c.country.toLowerCase().indexOf(q)>=0))f.push(c)}
+  if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}
+  var h="";
+  for(var i=0;i<f.length;i++){
+    var c=f[i],p=pure(c.weight||0,c.purity||999),v=value(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+    var iconHtml=c.photo?"<img src='"+c.photo+"'>":"🏛️";
+    h+="<div class='coin-card'><div class='coin-header'><div class='coin-icon'>"+iconHtml+"</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div><div class='coin-actions'><button class='btn-edit' onclick=\"edit('"+c.id+"')\">Modifier</button><button class='btn-delete' onclick=\"openDel('"+c.id+"')\">🗑️</button></div></div>"
+  }
+  list.innerHTML=h
+}
+
+function handlePhoto(e){
+  var file=e.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement("canvas");
+      var max=300;
+      var w=img.width,h=img.height;
+      if(w>h){if(w>max){h=h*(max/w);w=max}}else{if(h>max){w=w*(max/h);h=max}}
+      canvas.width=w;canvas.height=h;
+      var ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,w,h);
+      currentPhoto=canvas.toDataURL("image/jpeg",0.7);
+      showPhotoPreview(currentPhoto);
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPhotoPreview(src){
+  document.getElementById("photoPlaceholder").style.display="none";
+  var img=document.getElementById("photoImg");
+  img.src=src;
+  img.style.display="block";
+  document.getElementById("photoActions").style.display="flex";
+}
+
+function removePhoto(){
+  currentPhoto=null;
+  document.getElementById("photoPlaceholder").style.display="block";
+  document.getElementById("photoImg").style.display="none";
+  document.getElementById("photoActions").style.display="none";
+  document.getElementById("photoInput").value="";
+}
+
 function onPurityChange(){var s=document.getElementById("fPurity");document.getElementById("customPurityGroup").style.display=s.value==="custom"?"block":"none";calcPreview()}
 function getPurity(){var s=document.getElementById("fPurity");return s.value==="custom"?(parseInt(document.getElementById("fCustomPurity").value)||999):(parseInt(s.value)||999)}
-function openForm(id){document.getElementById("formModal").classList.add("active");document.getElementById("formTitle").textContent=id?"Modifier":"Ajouter";document.getElementById("customPurityGroup").style.display="none";var c=null;if(id)for(var i=0;i<coins.length;i++)if(coins[i].id===id){c=coins[i];break}document.getElementById("fId").value=c?c.id:"";document.getElementById("fName").value=c?c.name||"":"";document.getElementById("fCountry").value=c?c.country||"":"";document.getElementById("fYear").value=c?c.year||new Date().getFullYear():new Date().getFullYear();document.getElementById("fWeight").value=c?c.weight||"":"";document.getElementById("fPrice").value=c?c.purchasePrice||"":"";document.getElementById("fDate").value=c?c.purchaseDate||"":"";document.getElementById("fNotes").value=c?c.notes||"":"";var p=c?c.purity||999:999,s=document.getElementById("fPurity"),found=false;for(var i=0;i<s.options.length;i++)if(s.options[i].value===p.toString()){found=true;break}if(found)s.value=p.toString();else{s.value="custom";document.getElementById("customPurityGroup").style.display="block";document.getElementById("fCustomPurity").value=p}calcPreview()}
-function closeForm(){document.getElementById("formModal").classList.remove("active")}
+
+function openForm(id){
+  document.getElementById("formModal").classList.add("active");
+  document.getElementById("formTitle").textContent=id?"Modifier":"Ajouter";
+  document.getElementById("customPurityGroup").style.display="none";
+  removePhoto();
+  
+  var c=null;
+  if(id)for(var i=0;i<coins.length;i++)if(coins[i].id===id){c=coins[i];break}
+  
+  document.getElementById("fId").value=c?c.id:"";
+  document.getElementById("fName").value=c?c.name||"":"";
+  document.getElementById("fCountry").value=c?c.country||"":"";
+  document.getElementById("fYear").value=c?c.year||new Date().getFullYear():new Date().getFullYear();
+  document.getElementById("fWeight").value=c?c.weight||"":"";
+  document.getElementById("fPrice").value=c?c.purchasePrice||"":"";
+  document.getElementById("fDate").value=c?c.purchaseDate||"":"";
+  document.getElementById("fNotes").value=c?c.notes||"":"";
+  
+  if(c&&c.photo){
+    currentPhoto=c.photo;
+    showPhotoPreview(c.photo);
+  }
+  
+  var p=c?c.purity||999:999,s=document.getElementById("fPurity"),found=false;
+  for(var i=0;i<s.options.length;i++)if(s.options[i].value===p.toString()){found=true;break}
+  if(found)s.value=p.toString();else{s.value="custom";document.getElementById("customPurityGroup").style.display="block";document.getElementById("fCustomPurity").value=p}
+  calcPreview();
+}
+
+function closeForm(){document.getElementById("formModal").classList.remove("active");currentPhoto=null}
 function edit(id){openForm(id)}
 function calcPreview(){var w=parseFloat(document.getElementById("fWeight").value)||0,p=getPurity(),pur=pure(w,p);document.getElementById("prevPure").textContent=fmtW(pur);document.getElementById("prevValue").textContent=fmt(value(pur))}
-function save(){var n=document.getElementById("fName").value.trim(),w=parseFloat(document.getElementById("fWeight").value);if(!n){alert("Nom requis");return}if(!w||w<=0){alert("Poids invalide");return}var d={name:n,country:document.getElementById("fCountry").value.trim(),year:parseInt(document.getElementById("fYear").value)||null,weight:w,purity:getPurity(),purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,purchaseDate:document.getElementById("fDate").value||null,notes:document.getElementById("fNotes").value.trim()};var id=document.getElementById("fId").value;if(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}}else{d.id="c"+Date.now();coins.push(d)}saveCoins();updateStats();render();closeForm()}
+
+function save(){
+  var n=document.getElementById("fName").value.trim(),w=parseFloat(document.getElementById("fWeight").value);
+  if(!n){alert("Nom requis");return}
+  if(!w||w<=0){alert("Poids invalide");return}
+  
+  var d={
+    name:n,
+    country:document.getElementById("fCountry").value.trim(),
+    year:parseInt(document.getElementById("fYear").value)||null,
+    weight:w,
+    purity:getPurity(),
+    purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,
+    purchaseDate:document.getElementById("fDate").value||null,
+    notes:document.getElementById("fNotes").value.trim(),
+    photo:currentPhoto
+  };
+  
+  var id=document.getElementById("fId").value;
+  if(id){
+    for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}
+  }else{
+    d.id="c"+Date.now();
+    coins.push(d);
+  }
+  saveCoins();updateStats();render();closeForm();
+}
+
 function openDel(id){document.getElementById("delId").value=id;document.getElementById("delModal").classList.add("active")}
 function closeDel(){document.getElementById("delModal").classList.remove("active")}
 function confirmDel(){var id=document.getElementById("delId").value,n=[];for(var i=0;i<coins.length;i++)if(coins[i].id!==id)n.push(coins[i]);coins=n;saveCoins();updateStats();render();closeDel()}
 function exportCSV(){if(!coins.length){alert("Vide");return}var r=["Nom;Pays;Annee;Poids;Titre;Pur;Valeur;Achat"];for(var i=0;i<coins.length;i++){var c=coins[i],p=pure(c.weight||0,c.purity||999);r.push([c.name,c.country||"",c.year||"",(c.weight||0).toFixed(3),c.purity||999,p.toFixed(3),value(p).toFixed(2),c.purchasePrice||""].join(";"))}var a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));a.download="collection.csv";a.click()}
+
 load();updatePriceDisplay();updateStats();render();fetchPrice();
 </script>
 </body>
