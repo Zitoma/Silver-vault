@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Silver Vault</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--card:#14141c;--card2:#1a1a24;--text:#f5f5f7;--muted:#71717a;--border:rgba(255,255,255,0.1);--accent:#c9a227;--success:#22c55e;--danger:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{background:var(--card);padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#d4d4d8,#71717a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo h1{font-size:18px;background:linear-gradient(135deg,#d4d4d8,#71717a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.price-box{background:var(--card2);padding:10px 16px;border-radius:20px;font-size:14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.price-box strong{color:var(--text);font-size:16px}
+.price-box span{color:var(--muted);font-size:12px}
+.btn-refresh{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;font-size:16px}
+.btn-refresh.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-mini{background:var(--card2);padding:10px;border-radius:10px;text-align:center}
+.stat-mini .value{font-size:16px;font-weight:700}
+.stat-mini .label{font-size:10px;color:var(--muted);text-transform:uppercase}
+.price-info{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;padding:10px;background:var(--card2);border-radius:10px}
+.price-edit{background:var(--card2);padding:16px;border-radius:12px;margin-top:12px;display:none}
+.price-edit.show{display:block}
+.price-edit label{display:block;font-size:13px;color:var(--text);margin-bottom:10px}
+.price-edit-row{display:flex;gap:10px;margin-bottom:12px}
+.price-edit-row input{flex:1;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:600}
+.price-edit-row button{padding:14px 24px;background:var(--accent);border:none;border-radius:10px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
+.price-links{display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border)}
+.price-links span{font-size:11px;color:var(--muted);width:100%;margin-bottom:4px}
+.price-links a{padding:8px 14px;background:var(--card);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;border:1px solid var(--border)}
+main{padding:16px}
+.actions{display:flex;gap:10px;margin-bottom:16px}
+.search-box{flex:1;position:relative}
+.search-box input{width:100%;padding:12px 16px 12px 40px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px}
+.search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+.btn-add{background:var(--accent);border:none;color:var(--bg);padding:12px 20px;border-radius:12px;font-weight:600;cursor:pointer;font-size:20px}
+.btn-export{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer}
+.coins-list{display:flex;flex-direction:column;gap:12px}
+.coin-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.coin-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.coin-icon{width:50px;height:50px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.coin-info{flex:1;min-width:0}
+.coin-info h3{font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coin-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.purity-badge{background:#a8a8a8;color:#000;padding:2px 8px;border-radius:8px;font-weight:600;font-size:11px}
+.coin-value{text-align:right;flex-shrink:0}
+.coin-value .main{font-size:17px;font-weight:700}
+.coin-value .change{font-size:11px}
+.coin-value .change.up{color:var(--success)}
+.coin-value .change.down{color:var(--danger)}
+.coin-details{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:12px;border-top:1px solid var(--border);font-size:11px}
+.coin-details span{color:var(--muted)}
+.coin-details strong{color:var(--text)}
+.coin-actions{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.btn-edit,.btn-delete{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
+.btn-edit{background:var(--card2);color:var(--text)}
+.btn-delete{background:rgba(239,68,68,0.15);color:var(--danger)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .icon{font-size:48px;margin-bottom:16px}
+.empty-state h3{color:var(--text);margin-bottom:8px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.modal.active{display:flex}
+.modal-content{background:var(--card);border-radius:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:10}
+.modal-header h2{font-size:18px}
+.btn-close{background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer;padding:0 8px}
+.modal-body{padding:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calc-preview{background:rgba(201,162,39,0.15);border:1px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-around;font-size:14px}
+.calc-preview strong{color:var(--accent);font-size:16px}
+.modal-footer{display:flex;gap:12px;padding:20px;border-top:1px solid var(--border)}
+.btn-cancel{flex:1;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;font-size:16px}
+.btn-save{flex:1;padding:16px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-weight:700;cursor:pointer;font-size:16px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+<div class="header-top">
+<div class="logo"><div class="logo-icon">🪙</div><h1>Silver Vault</h1></div>
+<div class="price-box" onclick="togglePriceEdit()">
+<strong id="priceDisplay">3.12€</strong><span>/g</span>
+<button class="btn-refresh" id="btnRefresh" onclick="event.stopPropagation();fetchPrice()">🔄</button>
+</div>
+</div>
+<div class="stats-bar">
+<div class="stat-mini"><div class="value" id="statValue">0,00 €</div><div class="label">Valeur</div></div>
+<div class="stat-mini"><div class="value" id="statPure">0 g</div><div class="label">Argent pur</div></div>
+<div class="stat-mini"><div class="value" id="statCount">0</div><div class="label">Pièces</div></div>
+</div>
+<div class="price-info" id="priceInfo">Appuyez sur le prix pour modifier</div>
+<div class="price-edit" id="priceEdit">
+<label>Prix argent (€/g) :</label>
+<div class="price-edit-row">
+<input type="number" id="manualInput" step="0.01" placeholder="3.12" inputmode="decimal">
+<button onclick="setManualPrice()">OK</button>
+</div>
+<div class="price-links">
+<span>Vérifier le cours :</span>
+<a href="https://goldpricez.com/silver-rates/europe/gram" target="_blank">GoldPriceZ</a>
+<a href="https://www.google.com/search?q=cours+argent+euro+gramme" target="_blank">Google</a>
+</div>
+</div>
+</header>
+<main>
+<div class="actions">
+<div class="search-box"><input type="text" id="searchInput" placeholder="Rechercher..." oninput="render()"></div>
+<button class="btn-add" onclick="openForm()">+</button>
+<button class="btn-export" onclick="exportCSV()">📥</button>
+</div>
+<div id="list" class="coins-list"></div>
+</main>
+<div class="modal" id="formModal">
+<div class="modal-content">
+<div class="modal-header"><h2 id="formTitle">Ajouter</h2><button class="btn-close" onclick="closeForm()">✕</button></div>
+<div class="modal-body">
+<input type="hidden" id="fId">
+<div class="form-group"><label>Nom *</label><input type="text" id="fName" placeholder="American Silver Eagle"></div>
+<div class="form-row">
+<div class="form-group"><label>Pays</label><input type="text" id="fCountry" placeholder="USA"></div>
+<div class="form-group"><label>Année</label><input type="number" id="fYear" inputmode="numeric"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Poids (g) *</label><input type="number" id="fWeight" step="0.001" placeholder="31.103" oninput="calcPreview()" inputmode="decimal"></div>
+<div class="form-group"><label>Titre</label>
+<select id="fPurity" onchange="onPurityChange()">
+<option value="999">.999</option><option value="980">.980</option><option value="970">.970</option>
+<option value="960">.960</option><option value="958">.958</option><option value="950">.950</option>
+<option value="935">.935</option><option value="930">.930</option><option value="925">.925</option>
+<option value="916">.916</option><option value="915">.915</option><option value="900">.900</option>
+<option value="875">.875</option><option value="844">.844</option><option value="840">.840</option>
+<option value="835">.835</option><option value="833">.833</option><option value="830">.830</option>
+<option value="813">.813</option><option value="800">.800</option><option value="750">.750</option>
+<option value="720">.720</option><option value="700">.700</option><option value="687">.687</option>
+<option value="625">.625</option><option value="600">.600</option><option value="500">.500</option>
+<option value="400">.400</option><option value="custom">Autre...</option>
+</select>
+</div>
+</div>
+<div class="form-group" id="customPurityGroup" style="display:none"><label>Pureté (1-999)</label><input type="number" id="fCustomPurity" min="1" max="999" oninput="calcPreview()" inputmode="numeric"></div>
+<div class="calc-preview"><div>Pur: <strong id="prevPure">0 g</strong></div><div>Valeur: <strong id="prevValue">0 €</strong></div></div>
+<div class="form-row">
+<div class="form-group"><label>Prix achat (€)</label><input type="number" id="fPrice" step="0.01" inputmode="decimal"></div>
+<div class="form-group"><label>Date achat</label><input type="date" id="fDate"></div>
+</div>
+<div class="form-group"><label>Notes</label><textarea id="fNotes" rows="2"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn-cancel" onclick="closeForm()">Annuler</button><button class="btn-save" onclick="save()">Enregistrer</button></div>
+</div>
+</div>
+<div class="modal" id="delModal">
+<div class="modal-content" style="max-width:350px;text-align:center">
+<div class="modal-body" style="padding:30px">
+<div style="font-size:48px;margin-bottom:16px">🗑️</div>
+<h3>Supprimer ?</h3>
+<p style="color:var(--muted);margin:16px 0">Irréversible</p>
+<input type="hidden" id="delId">
+<div style="display:flex;gap:12px"><button class="btn-cancel" onclick="closeDel()">Annuler</button><button class="btn-delete" style="flex:1;padding:14px" onclick="confirmDel()">Supprimer</button></div>
+</div>
+</div>
+</div>
+<script>
+var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins";
+function load(){var k=["silver_vault_coins","sv2_coins","sv_coins"];for(var i=0;i<k.length;i++){try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}}var pk=["silver_vault_price","sv2_price"];for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}}
+function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins))}catch(e){}}
+function savePrice(){try{localStorage.setItem("silver_vault_price",price.toString())}catch(e){}}
+function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show")){var i=document.getElementById("manualInput");i.value=price.toFixed(2);i.focus()}}
+function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePriceDisplay();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
+function updatePriceDisplay(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
+function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePriceDisplay();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
+function pure(w,p){return(w*p)/1000}
+function value(p){return p*price}
+function fmt(v){return v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
+function fmtW(v){return v.toFixed(3)+" g"}
+function updateStats(){var t=0;for(var i=0;i<coins.length;i++)t+=pure(coins[i].weight||0,coins[i].purity||999);document.getElementById("statValue").textContent=fmt(value(t));document.getElementById("statPure").textContent=fmtW(t);document.getElementById("statCount").textContent=coins.length}
+function render(){var q=document.getElementById("searchInput").value.toLowerCase(),list=document.getElementById("list"),f=[];for(var i=0;i<coins.length;i++){var c=coins[i];if(!q||(c.name&&c.name.toLowerCase().indexOf(q)>=0)||(c.country&&c.country.toLowerCase().indexOf(q)>=0))f.push(c)}if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}var h="";for(var i=0;i<f.length;i++){var c=f[i],p=pure(c.weight||0,c.purity||999),v=value(p),g=c.purchasePrice?v-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;h+="<div class='coin-card'><div class='coin-header'><div class='coin-icon'>🪙</div><div class='coin-info'><h3>"+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(v)+"</div>"+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Total</span><br><strong>"+fmtW(c.weight||0)+"</strong></div><div><span>Pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div><div class='coin-actions'><button class='btn-edit' onclick=\"edit('"+c.id+"')\">Modifier</button><button class='btn-delete' onclick=\"openDel('"+c.id+"')\">🗑️</button></div></div>"}list.innerHTML=h}
+function onPurityChange(){var s=document.getElementById("fPurity");document.getElementById("customPurityGroup").style.display=s.value==="custom"?"block":"none";calcPreview()}
+function getPurity(){var s=document.getElementById("fPurity");return s.value==="custom"?(parseInt(document.getElementById("fCustomPurity").value)||999):(parseInt(s.value)||999)}
+function openForm(id){document.getElementById("formModal").classList.add("active");document.getElementById("formTitle").textContent=id?"Modifier":"Ajouter";document.getElementById("customPurityGroup").style.display="none";var c=null;if(id)for(var i=0;i<coins.length;i++)if(coins[i].id===id){c=coins[i];break}document.getElementById("fId").value=c?c.id:"";document.getElementById("fName").value=c?c.name||"":"";document.getElementById("fCountry").value=c?c.country||"":"";document.getElementById("fYear").value=c?c.year||new Date().getFullYear():new Date().getFullYear();document.getElementById("fWeight").value=c?c.weight||"":"";document.getElementById("fPrice").value=c?c.purchasePrice||"":"";document.getElementById("fDate").value=c?c.purchaseDate||"":"";document.getElementById("fNotes").value=c?c.notes||"":"";var p=c?c.purity||999:999,s=document.getElementById("fPurity"),found=false;for(var i=0;i<s.options.length;i++)if(s.options[i].value===p.toString()){found=true;break}if(found)s.value=p.toString();else{s.value="custom";document.getElementById("customPurityGroup").style.display="block";document.getElementById("fCustomPurity").value=p}calcPreview()}
+function closeForm(){document.getElementById("formModal").classList.remove("active")}
+function edit(id){openForm(id)}
+function calcPreview(){var w=parseFloat(document.getElementById("fWeight").value)||0,p=getPurity(),pur=pure(w,p);document.getElementById("prevPure").textContent=fmtW(pur);document.getElementById("prevValue").textContent=fmt(value(pur))}
+function save(){var n=document.getElementById("fName").value.trim(),w=parseFloat(document.getElementById("fWeight").value);if(!n){alert("Nom requis");return}if(!w||w<=0){alert("Poids invalide");return}var d={name:n,country:document.getElementById("fCountry").value.trim(),year:parseInt(document.getElementById("fYear").value)||null,weight:w,purity:getPurity(),purchasePrice:parseFloat(document.getElementById("fPrice").value)||null,purchaseDate:document.getElementById("fDate").value||null,notes:document.getElementById("fNotes").value.trim()};var id=document.getElementById("fId").value;if(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id){for(var k in d)coins[i][k]=d[k];break}}else{d.id="c"+Date.now();coins.push(d)}saveCoins();updateStats();render();closeForm()}
+function openDel(id){document.getElementById("delId").value=id;document.getElementById("delModal").classList.add("active")}
+function closeDel(){document.getElementById("delModal").classList.remove("active")}
+function confirmDel(){var id=document.getElementById("delId").value,n=[];for(var i=0;i<coins.length;i++)if(coins[i].id!==id)n.push(coins[i]);coins=n;saveCoins();updateStats();render();closeDel()}
+function exportCSV(){if(!coins.length){alert("Vide");return}var r=["Nom;Pays;Annee;Poids;Titre;Pur;Valeur;Achat"];for(var i=0;i<coins.length;i++){var c=coins[i],p=pure(c.weight||0,c.purity||999);r.push([c.name,c.country||"",c.year||"",(c.weight||0).toFixed(3),c.purity||999,p.toFixed(3),value(p).toFixed(2),c.purchasePrice||""].join(";"))}var a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+r.join("\n")],{type:"text/csv"}));a.download="collection.csv";a.click()}
+load();updatePriceDisplay();updateStats();render();fetchPrice();
+</script>
+</body>
+</html>
