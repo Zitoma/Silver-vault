@@ -8,7 +8,7 @@
 <title>Silver Vault</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0f;--card:#14141c;--card2:#1a1a24;--text:#f5f5f7;--muted:#71717a;--border:rgba(255,255,255,0.1);--accent:#c9a227;--accent2:#e8a849;--success:#22c55e;--danger:#ef4444}
+:root{--bg:#0a0a0f;--card:#14141c;--card2:#1a1a24;--text:#f5f5f7;--muted:#71717a;--border:rgba(255,255,255,0.1);--accent:#c9a227;--accent2:#e8a849;--success:#22c55e;--danger:#ef4444;--silver:#a8a8a8}
 body{font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:20px}
 header{background:var(--card);padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -21,10 +21,13 @@ header{background:var(--card);padding:16px;border-bottom:1px solid var(--border)
 .btn-refresh{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;font-size:16px}
 .btn-refresh.spin{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px}
+.stats-bar-2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-mini{background:var(--card2);padding:10px;border-radius:10px;text-align:center}
-.stat-mini .value{font-size:16px;font-weight:700}
-.stat-mini .label{font-size:10px;color:var(--muted);text-transform:uppercase}
+.stat-mini .value{font-size:15px;font-weight:700}
+.stat-mini .value.silver{color:var(--silver)}
+.stat-mini .value.gold{color:var(--accent2)}
+.stat-mini .label{font-size:9px;color:var(--muted);text-transform:uppercase}
 .price-info{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;padding:10px;background:var(--card2);border-radius:10px}
 .price-edit{background:var(--card2);padding:16px;border-radius:12px;margin-top:12px;display:none}
 .price-edit.show{display:block}
@@ -56,6 +59,7 @@ main{padding:16px}
 .purity-badge{background:#a8a8a8;color:#000;padding:2px 8px;border-radius:8px;font-weight:600;font-size:11px}
 .coin-value{text-align:right;flex-shrink:0}
 .coin-value .main{font-size:17px;font-weight:700}
+.coin-value .metal{font-size:11px;color:var(--silver)}
 .coin-value .premium{font-size:11px;color:var(--accent2)}
 .coin-value .change{font-size:11px}
 .coin-value .change.up{color:var(--success)}
@@ -69,12 +73,22 @@ main{padding:16px}
 
 /* CHART */
 .chart-section{background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px}
-.chart-section h3{font-size:14px;margin-bottom:12px;color:var(--muted)}
-.chart-container{height:150px;display:flex;align-items:flex-end;gap:4px;padding-top:20px;position:relative}
-.chart-bar{flex:1;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:4px 4px 0 0;min-height:4px;position:relative}
-.chart-bar:hover::after{content:attr(data-val);position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:var(--card2);padding:2px 6px;border-radius:4px;font-size:10px;white-space:nowrap}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.chart-header h3{font-size:14px;color:var(--muted)}
+.chart-legend{display:flex;gap:12px;font-size:10px}
+.chart-legend span{display:flex;align-items:center;gap:4px}
+.chart-legend .dot{width:8px;height:8px;border-radius:50%}
+.chart-legend .dot.metal{background:var(--silver)}
+.chart-legend .dot.numis{background:var(--accent2)}
+.chart-container{height:120px;display:flex;align-items:flex-end;gap:3px;padding-top:20px;position:relative}
+.chart-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;transition:height 0.3s}
+.chart-bar.metal{background:var(--silver)}
+.chart-bar.numis{background:var(--accent2)}
+.chart-bar-group:hover .chart-tooltip{display:block}
+.chart-tooltip{display:none;position:absolute;top:-5px;left:50%;transform:translateX(-50%);background:var(--card2);padding:4px 8px;border-radius:6px;font-size:9px;white-space:nowrap;z-index:10;border:1px solid var(--border)}
 .chart-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--muted)}
-.chart-empty{text-align:center;color:var(--muted);padding:40px;font-size:13px}
+.chart-empty{text-align:center;color:var(--muted);padding:30px;font-size:13px}
 
 /* MODALS */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px}
@@ -94,6 +108,8 @@ main{padding:16px}
 .calc-preview-row:last-child{margin-bottom:0;padding-top:8px;border-top:1px solid var(--border)}
 .calc-preview-row span{color:var(--muted);font-size:13px}
 .calc-preview-row strong{color:var(--accent);font-size:15px}
+.calc-preview-row strong.silver{color:var(--silver)}
+.calc-preview-row strong.gold{color:var(--accent2)}
 .calc-preview-row strong.total{font-size:18px}
 .modal-footer{display:flex;gap:12px;padding:20px;border-top:1px solid var(--border)}
 .btn-cancel{flex:1;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;font-size:16px}
@@ -134,10 +150,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 .detail-row .value.up{color:var(--success)}
 .detail-row .value.down{color:var(--danger)}
 .detail-row .value.premium{color:var(--accent2)}
+.detail-row .value.silver{color:var(--silver)}
 .detail-price-box{background:var(--card);border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .detail-price-item{text-align:center}
 .detail-price-item .label{font-size:11px;color:var(--muted);margin-bottom:4px}
 .detail-price-item .value{font-size:18px;font-weight:700}
+.detail-price-item .value.silver{color:var(--silver)}
+.detail-price-item .value.gold{color:var(--accent2)}
 .detail-price-item .sub{font-size:11px;color:var(--muted)}
 .detail-notes{background:var(--card);border-radius:12px;padding:16px;color:var(--muted);font-size:14px;line-height:1.5}
 .detail-actions{display:flex;gap:12px;padding:16px}
@@ -161,7 +180,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 <div class="stats-bar">
-<div class="stat-mini"><div class="value" id="statValue">0,00 €</div><div class="label">Valeur</div></div>
+<div class="stat-mini"><div class="value silver" id="statMetal">0,00 €</div><div class="label">Valeur métal</div></div>
+<div class="stat-mini"><div class="value gold" id="statNumis">0,00 €</div><div class="label">Valeur numismatique</div></div>
+</div>
+<div class="stats-bar-2">
+<div class="stat-mini"><div class="value" id="statTotal">0,00 €</div><div class="label">Total</div></div>
 <div class="stat-mini"><div class="value" id="statPure">0 g</div><div class="label">Argent pur</div></div>
 <div class="stat-mini"><div class="value" id="statCount">0</div><div class="label">Pièces</div></div>
 </div>
@@ -189,7 +212,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 <button class="sort-btn" onclick="setSort('name')">🔤 Nom</button>
 </div>
 <div class="chart-section">
+<div class="chart-header">
 <h3>📈 Évolution de la collection</h3>
+<div class="chart-legend">
+<span><div class="dot metal"></div>Métal</span>
+<span><div class="dot numis"></div>Numis.</span>
+</div>
+</div>
 <div id="chartContainer"></div>
 </div>
 <div id="list" class="coins-list"></div>
@@ -266,9 +295,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 </div>
 <div class="calc-preview">
 <div class="calc-preview-row"><span>Argent pur (total)</span><strong id="prevPure">0 g</strong></div>
-<div class="calc-preview-row"><span>Valeur métal</span><strong id="prevMetal">0 €</strong></div>
-<div class="calc-preview-row"><span>Valeur numismatique</span><strong id="prevPremium">—</strong></div>
-<div class="calc-preview-row"><span>Valeur totale</span><strong class="total" id="prevValue">0 €</strong></div>
+<div class="calc-preview-row"><span>Valeur métal</span><strong class="silver" id="prevMetal">0 €</strong></div>
+<div class="calc-preview-row"><span>Valeur numismatique</span><strong class="gold" id="prevPremium">—</strong></div>
+<div class="calc-preview-row"><span>Valeur estimée</span><strong class="total" id="prevValue">0 €</strong></div>
 </div>
 <div class="form-row">
 <div class="form-group"><label>Date achat</label><input type="date" id="fDate"></div>
@@ -314,50 +343,53 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 var coins=[],price=3.12,OZ=31.1035,KEY="silver_vault_coins",HKEY="silver_vault_history";
 var photo1=null,photo2=null,viewId=null,viewTab="data",sortBy="date",importData=[];
 
-var FLAGS={"france":"🇫🇷","suisse":"🇨🇭","switzerland":"🇨🇭","usa":"🇺🇸","etats-unis":"🇺🇸","états-unis":"🇺🇸","united states":"🇺🇸","allemagne":"🇩🇪","germany":"🇩🇪","belgique":"🇧🇪","belgium":"🇧🇪","italie":"🇮🇹","italy":"🇮🇹","espagne":"🇪🇸","spain":"🇪🇸","royaume-uni":"🇬🇧","uk":"🇬🇧","united kingdom":"🇬🇧","angleterre":"🇬🇧","canada":"🇨🇦","australie":"🇦🇺","australia":"🇦🇺","autriche":"🇦🇹","austria":"🇦🇹","pays-bas":"🇳🇱","netherlands":"🇳🇱","portugal":"🇵🇹","grece":"🇬🇷","greece":"🇬🇷","mexique":"🇲🇽","mexico":"🇲🇽","chine":"🇨🇳","china":"🇨🇳","japon":"🇯🇵","japan":"🇯🇵","russie":"🇷🇺","russia":"🇷🇺","afrique":"🌍","chad":"🇹🇩","tchad":"🇹🇩","congo":"🇨🇬","cameroun":"🇨🇲","gabon":"🇬🇦"};
+var FLAGS={"france":"🇫🇷","suisse":"🇨🇭","switzerland":"🇨🇭","usa":"🇺🇸","etats-unis":"🇺🇸","états-unis":"🇺🇸","united states":"🇺🇸","allemagne":"🇩🇪","germany":"🇩🇪","belgique":"🇧🇪","belgium":"🇧🇪","italie":"🇮🇹","italy":"🇮🇹","espagne":"🇪🇸","spain":"🇪🇸","royaume-uni":"🇬🇧","uk":"🇬🇧","united kingdom":"🇬🇧","angleterre":"🇬🇧","canada":"🇨🇦","australie":"🇦🇺","australia":"🇦🇺","autriche":"🇦🇹","austria":"🇦🇹","pays-bas":"🇳🇱","netherlands":"🇳🇱","portugal":"🇵🇹","grece":"🇬🇷","greece":"🇬🇷","mexique":"🇲🇽","mexico":"🇲🇽","chine":"🇨🇳","china":"🇨🇳","japon":"🇯🇵","japan":"🇯🇵","russie":"🇷🇺","russia":"🇷🇺","afrique":"🌍","chad":"🇹🇩","tchad":"🇹🇩","congo":"🇨🇬","cameroun":"🇨🇲","gabon":"🇬🇦","pologne":"🇵🇱","poland":"🇵🇱"};
 
-function getFlag(country){
-  if(!country)return"";
-  var c=country.toLowerCase().trim();
-  return FLAGS[c]||"";
-}
+function getFlag(country){if(!country)return"";return FLAGS[country.toLowerCase().trim()]||""}
 
 function load(){
   var k=["silver_vault_coins","sv2_coins","sv_coins"];
-  for(var i=0;i<k.length;i++){
-    try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}
-  }
+  for(var i=0;i<k.length;i++){try{var d=localStorage.getItem(k[i]);if(d){var p=JSON.parse(d);if(Array.isArray(p)&&p.length>0){coins=p;break}}}catch(e){}}
   var pk=["silver_vault_price","sv2_price"];
   for(var i=0;i<pk.length;i++){try{var v=parseFloat(localStorage.getItem(pk[i]));if(v>0){price=v;break}}catch(e){}}
 }
 function saveCoins(){try{localStorage.setItem(KEY,JSON.stringify(coins));saveHistory()}catch(e){}}
 function savePrice(){try{localStorage.setItem("silver_vault_price",price.toString())}catch(e){}}
 
+function calcTotals(){
+  var metalTotal=0,numisTotal=0,pureTotal=0,count=0;
+  for(var i=0;i<coins.length;i++){
+    var c=coins[i],qty=c.qty||1;
+    var p=pure(c.weight||0,c.purity||999)*qty;
+    var metal=val(p);
+    var numis=c.premium?c.premium*qty:0;
+    metalTotal+=metal;
+    numisTotal+=numis;
+    pureTotal+=p;
+    count+=qty;
+  }
+  return{metal:metalTotal,numis:numisTotal,pure:pureTotal,count:count,total:numisTotal>0?numisTotal:metalTotal};
+}
+
 function saveHistory(){
   try{
     var h=JSON.parse(localStorage.getItem(HKEY)||"[]");
     var today=new Date().toISOString().split("T")[0];
-    var total=0;
-    for(var i=0;i<coins.length;i++){
-      var c=coins[i],q=c.qty||1;
-      total+=val(pure(c.weight||0,c.purity||999))*q;
-    }
+    var totals=calcTotals();
+    var entry={date:today,metal:Math.round(totals.metal*100)/100,numis:Math.round(totals.numis*100)/100};
     if(h.length===0||h[h.length-1].date!==today){
-      h.push({date:today,value:Math.round(total*100)/100});
+      h.push(entry);
       if(h.length>30)h=h.slice(-30);
-      localStorage.setItem(HKEY,JSON.stringify(h));
     }else{
-      h[h.length-1].value=Math.round(total*100)/100;
-      localStorage.setItem(HKEY,JSON.stringify(h));
+      h[h.length-1]=entry;
     }
+    localStorage.setItem(HKEY,JSON.stringify(h));
   }catch(e){}
 }
 
-function getHistory(){
-  try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}
-}
+function getHistory(){try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}}
 
-function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show")){document.getElementById("manualInput").value=price.toFixed(2)}}
+function togglePriceEdit(){var e=document.getElementById("priceEdit");e.classList.toggle("show");if(e.classList.contains("show"))document.getElementById("manualInput").value=price.toFixed(2)}
 function setManualPrice(){var v=parseFloat(document.getElementById("manualInput").value);if(v>0){price=v;updatePriceUI();savePrice();updateStats();render();document.getElementById("priceEdit").classList.remove("show")}}
 function updatePriceUI(){document.getElementById("priceDisplay").textContent=price.toFixed(2)+"€";document.getElementById("priceInfo").textContent=price.toFixed(2)+" €/g (~"+(price*OZ/0.92).toFixed(0)+" $/oz)"}
 function fetchPrice(){var b=document.getElementById("btnRefresh");b.classList.add("spin");fetch("https://api.metals.live/v1/spot/silver").then(function(r){return r.json()}).then(function(d){var u=Array.isArray(d)?d[0].price:d.price;if(u>0){price=(u*0.92)/OZ;updatePriceUI();savePrice();updateStats();render()}}).catch(function(){}).finally(function(){b.classList.remove("spin")})}
@@ -366,17 +398,14 @@ function pure(w,p){return(w*p)/1000}
 function val(p){return p*price}
 function fmt(v){return v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
 function fmtW(v){return v.toFixed(3)+" g"}
+
 function updateStats(){
-  var t=0,w=0,n=0;
-  for(var i=0;i<coins.length;i++){
-    var c=coins[i],q=c.qty||1;
-    t+=val(pure(c.weight||0,c.purity||999))*q;
-    w+=pure(c.weight||0,c.purity||999)*q;
-    n+=q;
-  }
-  document.getElementById("statValue").textContent=fmt(t);
-  document.getElementById("statPure").textContent=fmtW(w);
-  document.getElementById("statCount").textContent=n;
+  var t=calcTotals();
+  document.getElementById("statMetal").textContent=fmt(t.metal);
+  document.getElementById("statNumis").textContent=t.numis>0?fmt(t.numis):"—";
+  document.getElementById("statTotal").textContent=fmt(t.numis>0?t.numis:t.metal);
+  document.getElementById("statPure").textContent=fmtW(t.pure);
+  document.getElementById("statCount").textContent=t.count;
 }
 
 function getCoin(id){for(var i=0;i<coins.length;i++)if(coins[i].id===id)return coins[i];return null}
@@ -392,15 +421,11 @@ function sortCoins(arr){
   var sorted=arr.slice();
   sorted.sort(function(a,b){
     if(sortBy==="value"){
-      var va=val(pure(a.weight||0,a.purity||999))*(a.qty||1);
-      var vb=val(pure(b.weight||0,b.purity||999))*(b.qty||1);
+      var va=(a.premium?a.premium:val(pure(a.weight||0,a.purity||999)))*(a.qty||1);
+      var vb=(b.premium?b.premium:val(pure(b.weight||0,b.purity||999)))*(b.qty||1);
       return vb-va;
     }
-    if(sortBy==="weight"){
-      var wa=pure(a.weight||0,a.purity||999)*(a.qty||1);
-      var wb=pure(b.weight||0,b.purity||999)*(b.qty||1);
-      return wb-wa;
-    }
+    if(sortBy==="weight")return(pure(b.weight||0,b.purity||999)*(b.qty||1))-(pure(a.weight||0,a.purity||999)*(a.qty||1));
     if(sortBy==="country")return(a.country||"").localeCompare(b.country||"");
     if(sortBy==="name")return(a.name||"").localeCompare(b.name||"");
     return(b.id||"").localeCompare(a.id||"");
@@ -415,11 +440,19 @@ function renderChart(){
     container.innerHTML="<div class='chart-empty'>Ajoutez des pièces pour voir l'évolution</div>";
     return;
   }
-  var max=Math.max.apply(null,h.map(function(x){return x.value}));
+  var maxM=Math.max.apply(null,h.map(function(x){return x.metal||0}));
+  var maxN=Math.max.apply(null,h.map(function(x){return x.numis||0}));
+  var max=Math.max(maxM,maxN,1);
+  
   var bars="";
   for(var i=0;i<h.length;i++){
-    var pct=max>0?(h[i].value/max)*100:0;
-    bars+="<div class='chart-bar' style='height:"+pct+"%' data-val='"+fmt(h[i].value)+"'></div>";
+    var pctM=max>0?((h[i].metal||0)/max)*100:0;
+    var pctN=max>0?((h[i].numis||0)/max)*100:0;
+    var tooltip=h[i].date.slice(5)+"<br>Métal: "+fmt(h[i].metal||0)+(h[i].numis?"<br>Numis: "+fmt(h[i].numis):"");
+    bars+="<div class='chart-bar-group'>";
+    if(h[i].numis>0)bars+="<div class='chart-bar numis' style='height:"+pctN+"%'></div>";
+    bars+="<div class='chart-bar metal' style='height:"+pctM+"%'></div>";
+    bars+="<div class='chart-tooltip'>"+tooltip+"</div></div>";
   }
   var labels="<span>"+h[0].date.slice(5)+"</span><span>"+h[h.length-1].date.slice(5)+"</span>";
   container.innerHTML="<div class='chart-container'>"+bars+"</div><div class='chart-labels'>"+labels+"</div>";
@@ -433,16 +466,17 @@ function render(){
   if(!f.length){list.innerHTML="<div class='empty-state'><div class='icon'>🪙</div><h3>"+(coins.length?"Aucun résultat":"Collection vide")+"</h3><p>"+(coins.length?"Modifiez la recherche":"Appuyez sur + pour ajouter")+"</p></div>";return}
   var html="";
   for(var i=0;i<f.length;i++){
-    var c=f[i],qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,v=val(p);
-    var prem=c.premium?c.premium*qty:null;
-    var totalVal=prem?prem:v;
-    var g=c.purchasePrice?totalVal-c.purchasePrice:null;
+    var c=f[i],qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,metalV=val(p);
+    var numisV=c.premium?c.premium*qty:0;
+    var displayVal=numisV>0?numisV:metalV;
+    var g=c.purchasePrice?displayVal-c.purchasePrice:null;
     var gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
     var ic=c.photo?"<img src='"+c.photo+"'>":"🏛️";
     var flag=getFlag(c.country);
     var qtyBadge=qty>1?"<span class='coin-qty'>x"+qty+"</span>":"";
-    var premLine=prem?"<div class='premium'>Numis: "+fmt(prem)+"</div>":"";
-    html+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+ic+qtyBadge+"</div><div class='coin-info'><h3>"+(flag?"<span class='flag'>"+flag+"</span>":"")+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(totalVal)+"</div>"+premLine+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Poids total</span><br><strong>"+fmtW((c.weight||0)*qty)+"</strong></div><div><span>Argent pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
+    var metalLine="<div class='metal'>Métal: "+fmt(metalV)+"</div>";
+    var numisLine=numisV>0?"<div class='premium'>Numis: "+fmt(numisV)+"</div>":"";
+    html+="<div class='coin-card' onclick=\"openDetail('"+c.id+"')\"><div class='coin-header'><div class='coin-icon'>"+ic+qtyBadge+"</div><div class='coin-info'><h3>"+(flag?"<span class='flag'>"+flag+"</span>":"")+(c.name||"?")+"</h3><div class='coin-meta'>"+(c.country?"<span>"+c.country+"</span>":"")+(c.year?"<span>"+c.year+"</span>":"")+"<span class='purity-badge'>."+(c.purity||999)+"</span></div></div><div class='coin-value'><div class='main'>"+fmt(displayVal)+"</div>"+metalLine+numisLine+(gp!==null?"<div class='change "+(g>=0?"up":"down")+"'>"+(g>=0?"▲":"▼")+" "+gp+"%</div>":"")+"</div></div><div class='coin-details'><div><span>Poids total</span><br><strong>"+fmtW((c.weight||0)*qty)+"</strong></div><div><span>Argent pur</span><br><strong>"+fmtW(p)+"</strong></div><div><span>Achat</span><br><strong>"+(c.purchasePrice?fmt(c.purchasePrice):"-")+"</strong></div></div></div>"
   }
   list.innerHTML=html
 }
@@ -463,26 +497,31 @@ function openDetail(id){
 function closeDetail(){document.getElementById("detailView").classList.remove("active");viewId=null}
 function switchTab(t){viewTab=t;updateTabs();renderDetail()}
 function updateTabs(){document.getElementById("tabData").classList.toggle("active",viewTab==="data");document.getElementById("tabInfo").classList.toggle("active",viewTab==="info")}
+
 function renderDetail(){
   var c=getCoin(viewId);if(!c)return;
-  var qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,v=val(p);
-  var prem=c.premium?c.premium*qty:null;
-  var totalVal=prem||v;
-  var g=c.purchasePrice?totalVal-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
+  var qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty,metalV=val(p);
+  var numisV=c.premium?c.premium*qty:0;
+  var displayVal=numisV>0?numisV:metalV;
+  var g=c.purchasePrice?displayVal-c.purchasePrice:null,gp=c.purchasePrice?((g/c.purchasePrice)*100).toFixed(1):null;
   var flag=getFlag(c.country);
   var h="<div class='detail-title'>"+(flag?"<span class='flag'>"+flag+"</span>":"")+c.name+(qty>1?" <span style='color:var(--muted)'>(x"+qty+")</span>":"")+"</div><div class='detail-year'>"+(c.year||"")+"</div>";
+  
   if(viewTab==="data"){
-    h+="<div class='detail-section'><h3>💰 Valeur actuelle</h3><div class='detail-price-box'>";
-    h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value'>"+fmt(v)+"</div></div>";
-    h+="<div class='detail-price-item'><div class='label'>Gain/Perte</div><div class='value "+(g>=0?"up":"down")+"'>"+(gp!==null?(g>=0?"+":"")+gp+"%":"—")+"</div></div></div></div>";
-    if(prem){
-      h+="<div class='detail-section'><h3>⭐ Valeur numismatique</h3>";
-      h+="<div class='detail-row'><span class='label'>Cote premium</span><span class='value premium'>"+fmt(prem)+"</span></div>";
-      h+="<div class='detail-row'><span class='label'>Prime vs métal</span><span class='value premium'>+"+(((prem/v)-1)*100).toFixed(0)+"%</span></div></div>";
+    h+="<div class='detail-section'><h3>💰 Valeurs</h3><div class='detail-price-box'>";
+    h+="<div class='detail-price-item'><div class='label'>Valeur métal</div><div class='value silver'>"+fmt(metalV)+"</div></div>";
+    h+="<div class='detail-price-item'><div class='label'>Valeur numismatique</div><div class='value gold'>"+(numisV>0?fmt(numisV):"—")+"</div></div></div></div>";
+    
+    if(numisV>0){
+      h+="<div class='detail-section'><h3>⭐ Prime numismatique</h3>";
+      h+="<div class='detail-row'><span class='label'>Prime vs métal</span><span class='value premium'>+"+(((numisV/metalV)-1)*100).toFixed(0)+"%</span></div></div>";
     }
-    h+="<div class='detail-section'><h3>🛒 Achat</h3>";
+    
+    h+="<div class='detail-section'><h3>📊 Performance</h3>";
     h+="<div class='detail-row'><span class='label'>Prix d'achat</span><span class='value'>"+(c.purchasePrice?fmt(c.purchasePrice):"—")+"</span></div>";
-    h+="<div class='detail-row'><span class='label'>Date</span><span class='value'>"+(c.purchaseDate||"—")+"</span></div></div>";
+    h+="<div class='detail-row'><span class='label'>Gain/Perte</span><span class='value "+(g>=0?"up":"down")+"'>"+(gp!==null?(g>=0?"+":"")+ gp+"% ("+fmt(g)+")":"—")+"</span></div>";
+    h+="<div class='detail-row'><span class='label'>Date d'achat</span><span class='value'>"+(c.purchaseDate||"—")+"</span></div></div>";
+    
     if(c.notes)h+="<div class='detail-section'><h3>📝 Notes</h3><div class='detail-notes'>"+c.notes+"</div></div>";
   }else{
     h+="<div class='detail-section'><h3>📋 Caractéristiques</h3>";
@@ -496,6 +535,7 @@ function renderDetail(){
   }
   document.getElementById("detailContent").innerHTML=h;
 }
+
 function editCurrent(){var id=viewId;closeDetail();openForm(id)}
 function deleteCurrent(){document.getElementById("delId").value=viewId;document.getElementById("delModal").classList.add("active")}
 
@@ -523,6 +563,7 @@ function resetForm(){
 }
 function onPurityChange(){document.getElementById("customPurityGroup").style.display=document.getElementById("fPurity").value==="custom"?"block":"none";calcPreview()}
 function getPurity(){var s=document.getElementById("fPurity");return s.value==="custom"?(parseInt(document.getElementById("fCustomPurity").value)||999):(parseInt(s.value)||999)}
+
 function calcPreview(){
   var w=parseFloat(document.getElementById("fWeight").value)||0;
   var qty=parseInt(document.getElementById("fQty").value)||1;
@@ -607,7 +648,9 @@ function handleCSV(e){
           year:parseInt(cols[2])||null,
           weight:parseFloat(cols[3])||0,
           purity:parseInt(cols[4])||999,
-          purchasePrice:parseFloat(cols[7])||null
+          qty:parseInt(cols[5])||1,
+          purchasePrice:parseFloat(cols[8])||null,
+          premium:parseFloat(cols[9])||null
         });
       }
     }
@@ -622,10 +665,7 @@ function handleCSV(e){
 }
 
 function confirmImport(){
-  for(var i=0;i<importData.length;i++){
-    importData[i].id="c"+Date.now()+i;
-    coins.push(importData[i]);
-  }
+  for(var i=0;i<importData.length;i++){importData[i].id="c"+Date.now()+i;coins.push(importData[i])}
   saveCoins();updateStats();render();closeImport();
   alert(importData.length+" pièces importées !");
 }
@@ -635,7 +675,7 @@ function confirmDel(){var id=document.getElementById("delId").value,n=[];for(var
 
 function exportCSV(){
   if(!coins.length){alert("Vide");return}
-  var r=["Nom;Pays;Annee;Poids;Titre;Quantite;Pur;Valeur;Achat;Premium"];
+  var r=["Nom;Pays;Annee;Poids;Titre;Quantite;Pur;ValeurMetal;Achat;Premium"];
   for(var i=0;i<coins.length;i++){
     var c=coins[i],qty=c.qty||1,p=pure(c.weight||0,c.purity||999)*qty;
     r.push([c.name,c.country||"",c.year||"",c.weight||0,c.purity||999,qty,p.toFixed(3),val(p).toFixed(2),c.purchasePrice||"",c.premium||""].join(";"));
